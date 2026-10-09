@@ -1,0 +1,30 @@
+# Environment / secrets - never commit real credentials
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+build/
+dist/
+
+# Data - never commit real or generated datasets
+data/
+*.csv
+*.parquet
+*.db
+*.sqlite
+*.xlsx
+
+# Notebooks / IDE
+.ipynb_checkpoints/
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
