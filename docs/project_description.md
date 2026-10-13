@@ -1,4 +1,4 @@
-# Project Description (Week 1, updated in Week 2)
+# Project Description (Week 1)
 
 ## 1. What is the title of your project?
 

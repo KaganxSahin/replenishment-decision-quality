@@ -63,5 +63,5 @@ synthetic generator. Technologies may evolve during the project.
 
 ## Current Status
 
-Weeks 1-2 - Project definition, first research, and data strategy finalized:
+Week 1 - Project definition, first research, and data strategy finalized:
 the project runs fully on synthetic data.

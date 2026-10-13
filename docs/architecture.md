@@ -1,7 +1,7 @@
 # Architecture Overview
 
-> Status: conceptual design (Week 2). Detailed diagrams and technology
-> decisions will be added in Week 3.
+> Status: conceptual design (Week 1). Detailed diagrams and technology
+> decisions will be added in later weeks.
 
 ## Pipeline
 

@@ -5,9 +5,9 @@ Monitoring Framework for ML-Driven Retail Stock Distribution
 **Author:** Kagan Sahin
 **Date:** October 2026
 
-> Draft status: Week 1 sections written; updated in Week 2 after the data
-> strategy decision (fully synthetic simulation). These sections will be
-> extended weekly as the project develops.
+> Draft status: initial versions of the required Week 1 sections, updated
+> after the Week 1 data strategy decision (fully synthetic simulation). These
+> will be extended weekly as the project develops.
 
 ## 1. Introduction
 
