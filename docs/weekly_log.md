@@ -14,3 +14,18 @@
 | **Tests performed** | None yet - documentation phase; the generator will be the first tested module. |
 | **Report sections updated** | Introduction, Problem Statement (added the data-confidentiality barrier), Motivation, Project Objective, Preliminary Scope - all in `docs/report_draft.md`. |
 | **Next week's plan** | Await Week 2 instructions from the instructor; expected focus: requirements engineering (functional and non-functional requirements, use cases / user stories, constraints and assumptions; GitHub Issues for planned work). |
+
+## Week 2 - Requirements Engineering and Planning
+
+| Field | Content |
+|---|---|
+| **Week** | 2 (October 2026) |
+| **Tasks planned** | Review the Week 1 definition; write functional and non-functional requirements; define scope, constraints, and assumptions; write user stories with acceptance criteria; plan development milestones; organize GitHub Issues; update the report and README. |
+| **Tasks completed** | Requirements specification written (`docs/requirements.md`): Week 1 review paragraph, FR-01..FR-06 with priorities (5 Must, 1 Should), NFR-01..NFR-03 with verification methods (performance, reproducibility, correctness), scope/constraints/assumptions, 3 user stories (US-01..US-03) each with 2 acceptance criteria linked to FRs, and the Week 3-9 milestone plan. GitHub Issues #1-#5 created (requirements, design, generator prototype, forecast engine + simulator, evaluation metrics). README updated with Planned Features, Scope, and Week 2 status. Report draft extended with Sections 6-12 (scope, requirements analysis, FR/NFR, constraints/assumptions, user stories, development plan). |
+| **GitHub commits** | `docs: add requirements specification for week 2` / `docs: update README with planned features and week 2 status` / `docs: add scope and requirements sections to report draft` / `docs: record week 2 progress in weekly log` |
+| **Problems encountered** | (1) Deciding realistic, measurable numbers for the non-functional requirements without any implementation yet; (2) prioritizing features for the first prototype given the single-developer constraint. |
+| **Solutions attempted** | (1) Chose verifiable targets tied to the default configuration (30 stores / 300 products / 2 years) with explicit verification methods to be validated in Week 6; (2) marked the dashboard as "Should" and kept the generator, forecasts, simulator, metrics, and classification as "Must", so the Week 4 prototype can already demonstrate FR-01. |
+| **References consulted** | A1-A3, T1-T3 (see `docs/references.md`); GitHub Issues documentation (https://docs.github.com/en/issues). |
+| **Tests performed** | None yet - documentation phase; NFR-02/NFR-03 define the tests to be implemented in Weeks 5-6. |
+| **Report sections updated** | New Sections 6-12 (Project Scope, Requirements Analysis, Functional Requirements, Non-Functional Requirements, Constraints and Assumptions, Use Cases / User Stories, Development Plan) in `docs/report_draft.md`. |
+| **Next week's plan** | Architecture and technical design (Week 3): module layout of the five components, synthetic world table schema, data-flow description, technology decisions with justification. |
