@@ -48,6 +48,32 @@ Develop a framework that can:
   product ranges.
 - ML engineers who maintain forecasting models and need systematic feedback.
 
+## Planned Features
+
+- FR-01: Parametric, seed-based synthetic retail world generation
+- FR-02: Store-product level demand forecasts (statistical baseline + ML model)
+- FR-03: Rule-based replenishment simulation (minimum stock, pack size, warehouse availability)
+- FR-04: Forecast-accuracy metrics (WAPE, MAPE, bias) aggregated by store, category, and season
+- FR-05: Deviation-cause classification (model error / stock constraint / rule constraint / other)
+- FR-06: Interactive dashboard with store, category, and date filters
+
+## Scope
+
+The first version includes the five pipeline components (synthetic world
+generator, forecast engine, replenishment simulator, evaluation framework,
+dashboard) and automated tests. Excluded: any real or confidential data,
+model retraining, streaming analysis, customer-level analysis, and price
+optimization. The full specification with non-functional requirements, user
+stories, and milestones is in `docs/requirements.md`; planned work is
+tracked in
+[GitHub Issues](https://github.com/KaganxSahin/replenishment-decision-quality/issues).
+
+## Current Status
+
+Week 2 - Requirements engineering: functional and non-functional
+requirements, user stories, scope, and the milestone plan are documented in
+`docs/requirements.md`; development work is tracked in GitHub Issues.
+
 ## Planned Technologies
 
 - Python 3.12
@@ -60,8 +86,3 @@ Develop a framework that can:
 An optional SQL connector for future real-data deployment is planned as an
 extension; the graduation project itself runs entirely on the built-in
 synthetic generator. Technologies may evolve during the project.
-
-## Current Status
-
-Week 1 - Project definition, first research, and data strategy finalized:
-the project runs fully on synthetic data.
