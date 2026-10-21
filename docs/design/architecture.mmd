@@ -1,0 +1,38 @@
+flowchart TD
+    subgraph GEN["1. SYNTHETIC WORLD GENERATOR<br/>(fictional retailer, seed-driven)"]
+        W1["stores, products,<br/>warehouse, rules"]
+        W2["daily sales history<br/>(training window)"]
+        W3["hidden future true demand<br/>(ground truth, evaluation-only)"]
+    end
+
+    subgraph FC["2. FORECASTER — pluggable interface<br/>predict(history, horizon) -> forecasts"]
+        FE["(a) Error-injection emulator<br/>MUST — controllable bias / variance / drift"]
+        FM["(b) Optional real model<br/>SHOULD — LightGBM / statistical, same interface"]
+    end
+
+    subgraph SIM["3. REPLENISHMENT SIMULATOR"]
+        S1["rules: min stock, pack size,<br/>warehouse availability"]
+        S2["daily ship decisions,<br/>inventory, stock-outs"]
+    end
+
+    subgraph EV["4. EVALUATION FRAMEWORK (core deliverable)"]
+        E1["forecast vs true demand<br/>WAPE / MAPE / bias"]
+        E2["forecast vs shipped<br/>deviation-cause classification:<br/>model / stock / rule / other"]
+        E3["outcomes: stock-outs,<br/>overstock, lost sales"]
+    end
+
+    DASH["5. DASHBOARD<br/>(Streamlit)<br/>store / category / season drill-downs"]
+
+    W2 -->|history| FE
+    W2 -->|history| FM
+    W1 --> SIM
+    FE -->|forecasts| SIM
+    FM -->|forecasts| SIM
+    S1 --> S2
+    S2 -->|decisions + outcomes| E1
+    S2 -->|decisions + outcomes| E2
+    S2 -->|decisions + outcomes| E3
+    W3 -.->|"ground truth (only evaluation sees this)"| E1
+    E1 --> DASH
+    E2 --> DASH
+    E3 --> DASH
