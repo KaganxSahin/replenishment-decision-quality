@@ -3,8 +3,8 @@
 | Field | Student response |
 |-------|------------------|
 | Tasks planned and completed | Converted the Week 2 requirements into a coherent technical design: (1) requirements-to-design traceability for 3 FRs + 2 NFRs (Table A); (2) component responsibility sheet for the 5 pipeline components with explicit boundaries (Table B); (3) two student-created architecture diagrams (Figure 3.1 high-level, Figure 3.2 self-validation loop) with explanations; (4) one end-to-end data flow for a single store-product-day (Table C); (5) data dictionary and forecaster interface spec (Task 3.5); (6) two ADR-style decision records (ADR-01 emulator vs real model, ADR-02 seed-generated vs committed data); (7) design walkthrough, 2 risks, and the Week 4 prototype goal (Table E). |
-| New diagrams / files | `docs/design/architecture.png` + `architecture.mmd` (source), `docs/design/emulator-selfvalidation.png`, `docs/design/design-decisions.md`, `docs/design/component-interfaces.md`, `docs/weekly-progress/week03.md`. Diagram PNGs are generated from a checked-in Python script so they remain editable and reproducible. |
-| GitHub commit links or hashes | (to be filled after push this week) design branch `docs/week3-architecture`; commits adding `docs/design/` and the report sections. Issue #2 (Week 3 design) will be closed via commit. |
+| New diagrams / files | `docs/design/architecture.png` + `architecture.mmd` (Mermaid source), `docs/design/emulator-selfvalidation.png`, `docs/design/generate_diagrams.py` (matplotlib script that renders both PNGs, so the figures remain editable and reproducible), `docs/design/design-decisions.md`, `docs/design/component-interfaces.md`, `docs/weekly-progress/week03.md`. |
+| GitHub commit links or hashes | Design branch `docs/week3-architecture`: `2bf62f3` (architecture and component interfaces), `be1a651` (design decisions and ADR records), `3c9a44a` (architecture diagrams and self-validation figure), `ecec781` (week 3 report sections and progress log). Merged to `main` via PR [#7](https://github.com/KaganxSahin/replenishment-decision-quality/pull/7) (squash commit `2b20265`); issue #2 closed with a reference to the PR. Follow-up: `docs: add diagram generation script and finalize week 3 evidence links`. |
 | Technical problems found | (1) Mermaid CLI / Node were not available locally, so the `.mmd` source could not be rendered directly. (2) First matplotlib render placed arrow labels on top of component titles (text overlap). |
 | Solutions considered | (1) Kept the Mermaid source as the documented diagram source and rendered the figures with matplotlib from a versioned Python script, which is also reproducible. (2) Adjusted box text layout (title vs body offsets) and rerouted the ground-truth arrow below the forecaster box to avoid crossing it; re-rendered and visually verified both PNGs. |
 | References consulted | A1-A3, T1-T3 (docs/references.md); NumPy Generator/PCG64 docs (deterministic seeding, ADR-02); Beel & Lange on controlled/ground-truth evaluation (ADR-01). |
@@ -33,5 +33,6 @@
    single-cause known-answer tests. First Week 4 verification: the generator
    produces the world deterministically from a seed.
 6. **Which GitHub changes / report pages prove this week:** the
-   `docs/week3-architecture` branch commits adding `docs/design/` and report
-   Sections 13-17, plus this log.
+   `docs/week3-architecture` branch commits (`2bf62f3`, `be1a651`, `3c9a44a`,
+   `ecec781`) merged via PR #7, adding `docs/design/` (diagrams + sources +
+   decisions) and report Sections 13-17, plus this log.

@@ -98,8 +98,15 @@ launches the dashboard. No database, network, or real data file is required
 | lost_sales | int | max(0, true demand - shipped) |
 | stock_out | bool | lost_sales > 0 |
 
-## 4. Validity, Privacy, and Security Notes
+## 4. Storage, Validity, Privacy, and Security Notes
 
+- **Where data lives:** all pipeline data is held in memory (pandas
+  DataFrames) during a run and is not persisted by default - there is no
+  database and no data file. A run can optionally export the generated world
+  and evaluation outputs to local CSV files for inspection (an explicit
+  `--export-dir` flag); those exports are synthetic, derived from the seed,
+  and safe to share. The only committed data is a tiny, hand-written
+  synthetic test fixture for unit tests.
 - **Validity:** referential integrity is enforced by construction (all
   store_id/product_id values come from the generated `stores`/`products`
   tables); quantities are non-negative; dates form a contiguous range.
