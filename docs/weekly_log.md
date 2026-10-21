@@ -29,3 +29,18 @@
 | **Tests performed** | None yet - documentation phase; NFR-02/NFR-03/NFR-04 define the tests to be implemented in Weeks 5-6, including the known-answer classification tests enabled by the emulator. |
 | **Report sections updated** | Sections 1, 3, 4, 5 revised, and Sections 6-12 rewritten (Project Scope, Requirements Analysis, Functional Requirements, Non-Functional Requirements, Constraints and Assumptions, Use Cases / User Stories, Development Plan) in `docs/report_draft.md`. |
 | **Next week's plan** | Architecture and technical design (Week 3): module layout of the five components, synthetic world table schema, forecaster interface definition, data-flow description, technology decisions with justification. |
+
+## Week 3 - Architecture and Technical Design
+
+| Field | Content |
+|---|---|
+| **Week** | 3 (October 2026) |
+| **Tasks planned** | Convert Week 2 requirements into a technical design: requirements-to-design traceability, component responsibility sheet, student-created architecture diagrams, one end-to-end data flow, data dictionary / interface spec, ADR-style technology decisions, design risks, and a Week 4 prototype goal; update the report and GitHub. |
+| **Tasks completed** | Table A (FR-01/02/06 + NFR-03/04 to design), Table B (5-component responsibility sheet + boundaries), Table C (one store-product-day end-to-end flow), Table E (2 risks + Week 4 hand-off) all written in `docs/design/design-decisions.md`. Two student-created diagrams produced: Figure 3.1 (high-level architecture) and Figure 3.2 (forecaster self-validation / known-answer loop), each with a caption and a paragraph explanation. `docs/design/component-interfaces.md` holds the forecaster interface contract and the full data dictionary (Task 3.5). Two ADRs recorded: ADR-01 (error-injection emulator as core forecaster vs real model) and ADR-02 (seed-generated data vs committed data files). Report Sections 13-17 added (Methodology, Proposed System, System Architecture with figures, Technology Selection, Design Decisions/Risks). `docs/weekly-progress/week03.md` written (Table F + prepared answers). |
+| **GitHub commits** | `docs: add architecture and component interfaces` / `docs: add design decisions and ADR records` / `docs: add architecture diagrams and self-validation figure` / `docs: add week 3 report sections and progress log` (design branch `docs/week3-architecture`; issue #2 closed via commit). |
+| **Problems encountered** | (1) Mermaid CLI / Node were not available locally, so the `.mmd` source could not be rendered directly. (2) First matplotlib render placed arrow labels on top of component titles (text overlap). |
+| **Solutions attempted** | (1) Kept the Mermaid source as the documented diagram source and rendered the figures with a versioned matplotlib script, which is itself reproducible. (2) Adjusted box title/body layout and rerouted the ground-truth arrow below the forecaster box; re-rendered and visually verified both PNGs. |
+| **References consulted** | A1-A3, T1-T3 (docs/references.md); NumPy Generator/PCG64 docs (ADR-02); Beel & Lange on ground-truth evaluation (ADR-01). |
+| **Tests performed** | None yet - design phase; Week 4 will add the first runnable code (generator). |
+| **Report sections updated** | Sections 13-17 in `docs/report_draft.md`. |
+| **Next week's plan** | Week 4 prototype: implement the synthetic world generator, demonstrate determinism (same seed -> identical output), and capture terminal output as evidence (issue #3). |

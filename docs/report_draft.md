@@ -266,3 +266,140 @@ only a rule constraint was injected, the classifier labels the deviation
 | 7 | Reproducibility: single-command pipeline (install + run) with no database or external file dependency, requirements.txt, setup guide in README, peer clone-and-run test. |
 | 8 | Completed report, professional README, masked/sample screenshots of the dashboard and pipeline outputs. |
 | 9 | Final demonstration: live end-to-end run (generate -> forecast -> simulate -> evaluate -> dashboard), including the self-validation (known-answer) results, and presentation. |
+
+## 13. Methodology (Week 3)
+
+The engineering approach follows a simulation-based evaluation methodology.
+Rather than evaluating a deployed system on confidential production data, the
+project reproduces the essential decision chain of a replenishment system
+inside a controlled simulation, and builds the evaluation layer on top of it.
+This fits the problem for three reasons:
+
+1. **Ground truth is available.** Because the simulation generates the future,
+   true demand is known, so forecast accuracy can be measured against demand
+   rather than against stock-out-censored sales - something impossible with
+   real retail data.
+2. **The evaluation tool itself can be verified.** A controllable
+   error-injection emulator can produce forecasts with a precisely known
+   cause, so the evaluation framework's deviation-cause classification can be
+   proven correct with known-answer tests before it is trusted (Section 15,
+   Figure 3.2).
+3. **It is reproducible and data-independent.** A single seed regenerates the
+   whole world and the whole pipeline, with no database, external API, or real
+   data file (NFR-02, NFR-04), so anyone can reproduce every result.
+
+Development proceeds iteratively along the pipeline: generator (Week 4), then
+forecaster + simulator + evaluator (Week 5), then testing and validation
+(Week 6), matching the milestone plan in Section 12.
+
+## 14. Proposed System (Week 3)
+
+**Goal.** Measure the decision quality of an ML-driven replenishment system:
+track forecast accuracy by segment, and attribute every forecast-vs-shipped
+deviation to a cause (model error, stock constraint, rule constraint, other).
+
+**Users.** Retail analytics and planning teams, category managers / demand
+planners, and ML engineers (Section 7). Within the graduation project the
+direct user is the developer/analyst running the pipeline and the dashboard.
+
+**Main functions.** The five pipeline functions FR-01..FR-07: generate the
+world, produce forecasts (emulator + optional real model), simulate
+replenishment, evaluate (metrics + deviation-cause classification), and
+visualise, with automated tests.
+
+**Boundaries.** All components run locally; there is no server, database,
+cloud, or external API. The system reads no real data. It evaluates decisions
+produced inside the simulation; it does not modify any production engine
+(Section 5.2). The only user-facing component is the dashboard; everything
+else is library/CLI code.
+
+## 15. System Architecture (Week 3)
+
+**Figure 3.1 - High-Level System Architecture** (docs/design/architecture.png;
+editable source: docs/design/architecture.mmd and the rendering script).
+
+Figure 3.1 presents the proposed architecture. The Synthetic World Generator
+sends the daily sales history to the Forecaster, and the world rules, catalog,
+and warehouse state to the Replenishment Simulator. The Forecaster produces
+forecasts that the Simulator turns into daily ship decisions by applying the
+business rules; the Simulator emits decisions and outcomes to the Evaluation
+Framework. The Generator also sends the hidden true demand (dashed arrow) to
+the Evaluation Framework only, so that "forecast vs true demand" stays a fair
+comparison. The Evaluation Framework forwards metrics and deviation causes to
+the Dashboard. This separation was selected because the project is an
+evaluation layer, not a model: each link of the decision chain
+(generate -> forecast -> decide -> evaluate -> present) is an isolated,
+separately testable component, and the evaluator - the core deliverable - can
+be verified independently of any forecaster.
+
+*Reading Figure 3.1:* the run starts in the Generator (1); the Forecaster (2)
+receives history and produces forecasts; processing is split between the
+Simulator (3, decision logic) and the Evaluation Framework (4, measurement);
+output is produced by the Dashboard (5); if the Forecaster fails, the
+Simulator treats the missing forecast as zero demand and the Evaluator flags
+it (see Table C in docs/design/design-decisions.md).
+
+**Figure 3.2 - Forecaster Self-Validation (Known-Answer Loop)**
+(docs/design/emulator-selfvalidation.png).
+
+Figure 3.2 details how the evaluation framework is verified. The emulator (2a)
+injects a deviation with a single known cause (bias, variance, seasonal drift,
+or a seeded stock/rule limit); the Simulator applies the rules; the Evaluation
+Framework classifies the deviation; and the known-answer test checks that the
+classified cause equals the injected cause (NFR-03b). Only after this loop
+passes is the framework applied to any other forecaster's output. This figure
+is the design-level guarantee behind the project's central claim.
+
+**Component responsibilities and one complete data flow** are given in Tables
+B and C of docs/design/design-decisions.md (single store-product-day followed
+through all five components), and the interface/data dictionary in
+docs/design/component-interfaces.md.
+
+## 16. Technology Selection (Week 3)
+
+Two consequential decisions are recorded as ADRs (docs/design/design-decisions.md):
+
+- **ADR-01 - emulator vs real model first.** Selected: a parametric
+  error-injection emulator as the core forecaster behind a pluggable
+  interface; alternative: a real ML model as the core forecaster. Rationale:
+  the emulator is the only way to verify the evaluation framework with
+  known-answer tests, and it fits the single-developer, 9-week constraint;
+  the pluggable interface keeps a real model attachable.
+- **ADR-02 - seed-generated vs committed data.** Selected: generate all data
+  on demand from a fixed seed via one CLI entry point; alternative: commit
+  generated data files. Rationale: a fixed seed already guarantees bit-for-bit
+  reproducibility without storing data, keeping the repo small and guaranteeing
+  data independence by construction.
+
+The supporting stack is Python 3.12 with NumPy/pandas (generation and data
+processing; NumPy's `Generator`/`PCG64` provides the deterministic seeding
+cited in ADR-02), LightGBM/statsmodels for the optional real forecaster,
+Streamlit for the dashboard, and pytest for the known-answer and metric tests.
+
+## 17. Design Decisions, Risks and Limitations (Week 3)
+
+**Trade-offs.** The emulator-based core (ADR-01) trades realism of the error
+source for verifiability of the evaluator; the seed-generated-data choice
+(ADR-02) trades a pre-built dataset for guaranteed reproducibility and data
+independence. Both are deliberate and documented.
+
+**Risks** (full table in docs/design/design-decisions.md, Table E):
+
+- **R1:** the parametric demand model may not reproduce realistic error
+  patterns - mitigated by configurable emulator error profiles and the
+  optional real forecaster as a stress case.
+- **R2 (highest):** deviation-cause classification may be ambiguous when
+  several causes coincide on one day - mitigated by an explicit priority rule
+  (stock -> rule -> model -> other) and by single-cause known-answer tests.
+
+**Known limitations.** The synthetic world is a simplification (no promotions,
+price elasticity, or supply delays in the first version); the framework
+validates the evaluation methodology under controlled conditions and does not
+measure any real retailer's accuracy; connecting to a real data source is a
+future, out-of-scope extension (Section 10).
+
+**Week 4 prototype goal (verifiable).** In Week 4, I will demonstrate the
+synthetic world generator, where a generation config (10 stores, 200 products,
+1 year) passes through the Synthetic World Generator to produce `sales_history`
+and a hidden `true_demand`, printed as row counts and a sample to the
+terminal, with two identical-seed checksums as proof of determinism.

@@ -98,10 +98,23 @@ tracked in
 
 ## Current Status
 
-Week 2 - Requirements engineering completed and revised: the project now runs
-entirely on synthetic data with no calibration from any real or confidential
-source, around a pluggable forecaster architecture (error-injection emulator
-+ optional real model) that allows the evaluation framework to be validated
-against known-cause errors before being applied to any forecaster. Full
-specification in `docs/requirements.md`; development work tracked in GitHub
-Issues.
+Week 3 - Architecture and technical design completed. The five-component
+pipeline (generator, pluggable forecaster, simulator, evaluator, dashboard)
+is fully specified: requirements-to-design traceability, component
+responsibility sheet, one end-to-end data flow, data dictionary, forecaster
+interface contract, two ADRs (emulator-vs-real-model and seed-generated-vs-
+committed-data), and two student-created architecture diagrams.
+
+Design artifacts live in `docs/design/`:
+
+- [High-level architecture diagram](docs/design/architecture.png) (Figure 3.1)
+  and the [self-validation / known-answer loop](docs/design/emulator-selfvalidation.png)
+  (Figure 3.2), with editable sources.
+- [design-decisions.md](docs/design/design-decisions.md) - traceability,
+  component sheet, data flow, risks, ADR-01 / ADR-02.
+- [component-interfaces.md](docs/design/component-interfaces.md) - forecaster
+  interface and data dictionary.
+
+Report Sections 13-17 (Methodology, Proposed System, System Architecture,
+Technology Selection, Design Decisions) added in `docs/report_draft.md`.
+Next: Week 4 prototype - the synthetic world generator.
