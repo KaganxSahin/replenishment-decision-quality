@@ -403,3 +403,37 @@ synthetic world generator, where a generation config (10 stores, 200 products,
 1 year) passes through the Synthetic World Generator to produce `sales_history`
 and a hidden `true_demand`, printed as row counts and a sample to the
 terminal, with two identical-seed checksums as proof of determinism.
+
+## 18. Implementation Overview (Week 4 - Planned)
+
+The first prototype will implement the synthetic world generator from the
+Week 3 architecture and address FR-01. Given a random seed and parameters
+such as store count, product count, historical duration, and future horizon,
+it is intended to generate fictional stores, products, a warehouse stock
+snapshot, daily historical sales, and future true demand. Store and product
+characteristics and category seasonality will be generated from illustrative
+parameters rather than calibrated to any confidential dataset. A planned
+example uses 10 stores, 200 products, and one year of daily history; the future
+period will be separate from the history.
+
+For this first prototype, historical sales are planned as a simplified
+synthetic series without reconstructing a complete past inventory and
+replenishment process. Future demand is an independently accessible
+simulation output for later evaluation, not an input to a forecaster. The
+prototype will report table sizes and sample records, and repeated runs with
+the same configuration and seed will be compared. This is planned work, not
+an implemented or verified result. Forecasting, replenishment decisions,
+metrics, attribution, the dashboard, and a full historical stock simulation
+remain outside the Week 4 prototype. No real retailer data, proprietary
+parameters, or database connection will be used.
+
+## 19. Development Environment and Technologies (Week 4)
+
+The development environment uses Python 3.12.10 and Git 2.55.0 on Windows.
+An isolated `.venv` was created using Python's `venv` module. NumPy 2.5.3 and
+pandas 3.0.6 are specified in `requirements.txt` and were installed in this
+virtual environment. The initial entry point, `src/rdq/__main__.py`, imports
+both packages and prints their versions; it does not generate data. Installation
+and execution commands are documented in the README. The environment was
+checked by running this entry point and `python -m pip check` inside `.venv`;
+both completed successfully.

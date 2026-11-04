@@ -27,8 +27,8 @@ inject forecast errors with precisely known causes (used to validate the
 framework itself), and optionally a real statistical/ML model trained purely
 on the synthetic history. A rule-based replenishment simulator turns forecasts
 into daily decisions, and an evaluation framework measures their quality
-against a known ground truth. The entire pipeline runs end to end from a
-single command, with no database, external file, or real data of any kind.
+against a known ground truth. The intended pipeline will run end to end from a single command, with no
+database, external file, or real data of any kind.
 
 ## Objective
 
@@ -96,16 +96,29 @@ user stories, and milestones is in `docs/requirements.md`; planned work is
 tracked in
 [GitHub Issues](https://github.com/KaganxSahin/replenishment-decision-quality/issues).
 
+## Development Setup (Windows)
+
+Python 3.12 and Git are required. From the repository root, run:
+
+```cmd
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt
+.venv\Scripts\python src\rdq\__main__.py
+```
+
+The last command checks that NumPy and pandas can be imported and prints their
+versions. It is an environment check only: the synthetic generator is not yet
+implemented. The `.venv/` directory is ignored by Git. Installation needs access
+to the Python package index or a local package cache.
+
 ## Current Status
 
-Week 3 - Architecture and technical design completed. The five-component
-pipeline (generator, pluggable forecaster, simulator, evaluator, dashboard)
-is fully specified: requirements-to-design traceability, component
-responsibility sheet, one end-to-end data flow, data dictionary, forecaster
-interface contract, two ADRs (emulator-vs-real-model and seed-generated-vs-
-committed-data), and two student-created architecture diagrams.
+Week 4 in progress - the initial implementation scope and development
+structure are defined, and the Python environment can be started. The synthetic
+world generator is the next implementation step; no prototype data is
+produced yet.
 
-Design artifacts live in `docs/design/`:
+Week 3 architecture and technical design are documented in `docs/design/`:
 
 - [High-level architecture diagram](docs/design/architecture.png) (Figure 3.1)
   and the [self-validation / known-answer loop](docs/design/emulator-selfvalidation.png)
