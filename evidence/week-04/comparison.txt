@@ -1,0 +1,2 @@
+Comparing files EVIDENCE\WEEK-04\run-1.txt and EVIDENCE\WEEK-04\RUN-2.TXT
+FC: no differences encountered

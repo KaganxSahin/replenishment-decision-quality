@@ -103,20 +103,52 @@ Python 3.12 and Git are required. From the repository root, run:
 ```cmd
 python -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
-.venv\Scripts\python src\rdq\__main__.py
+.venv\Scripts\python -m src.rdq --seed 42
 ```
 
-The last command checks that NumPy and pandas can be imported and prints their
-versions. It is an environment check only: the synthetic generator is not yet
-implemented. The `.venv/` directory is ignored by Git. Installation needs access
-to the Python package index or a local package cache.
+Run the preliminary generator tests with:
+
+```cmd
+.venv\Scripts\python -m unittest discover -s tests -v
+```
+
+The generator command creates five tables in memory: stores, products, a warehouse
+stock snapshot, historical sales and future true demand. It prints row counts,
+three sample rows and a checksum for each table; no data files are saved. The
+prototype defaults to 10 stores, 200 products, 365 historical days and 28 future
+days. Use `--help` to see the seed, size, date and horizon options. Repeated
+runs with the same settings can be compared using the checksums; reproduce them
+with the same Python and dependency versions.
+
+To repeat the Week 4 demonstration and compare the two captured outputs, run
+these commands from the repository root after setup. The output files are
+written to the Windows temporary directory, not into the repository:
+
+```cmd
+.venv\Scripts\python -m src.rdq --seed 42 > "%TEMP%\rdq-week04-run-1.txt"
+.venv\Scripts\python -m src.rdq --seed 42 > "%TEMP%\rdq-week04-run-2.txt"
+fc /b "%TEMP%\rdq-week04-run-1.txt" "%TEMP%\rdq-week04-run-2.txt"
+```
+
+The captured [first run](evidence/week-04/run-1.txt),
+[second run](evidence/week-04/run-2.txt), and
+[comparison](evidence/week-04/comparison.txt) are the demonstration evidence.
+
+The historical sales series is a simplified synthetic demand-based series; it
+does not yet model stock-outs or a past replenishment process. Forecasts,
+replenishment decisions, evaluation and the dashboard are not implemented.
+The `.venv/` directory is ignored by Git. Installation needs access to the
+Python package index or a local package cache.
 
 ## Current Status
 
-Week 4 in progress - the initial implementation scope and development
-structure are defined, and the Python environment can be started. The synthetic
-world generator is the next implementation step; no prototype data is
-produced yet.
+Week 4 prototype - the first synthetic world generator is implemented.
+The default example produces 730,000 historical sales rows and 56,000 future
+demand rows. Two runs with seed 42 produced matching checksums for all five
+tables in the current environment. Eight preliminary generator tests passed;
+the checks and their results are recorded in Section 20 of
+`docs/report_draft.md`. The demonstration outputs and comparison are in
+`evidence/week-04/`.
 
 Week 3 architecture and technical design are documented in `docs/design/`:
 
@@ -129,5 +161,4 @@ Week 3 architecture and technical design are documented in `docs/design/`:
   interface and data dictionary.
 
 Report Sections 13-17 (Methodology, Proposed System, System Architecture,
-Technology Selection, Design Decisions) added in `docs/report_draft.md`.
-Next: Week 4 prototype - the synthetic world generator.
+Technology Selection, Design Decisions) are in `docs/report_draft.md`.

@@ -3,12 +3,11 @@
 **Project:** Replenishment Decision Quality: A Simulation-Based Evaluation and
 Monitoring Framework for ML-Driven Retail Stock Distribution
 **Author:** Kagan Sahin
-**Date:** October 2026
+**Date:** Updated 4 November 2026
 
-> Draft status: Week 1 sections (definition) and Week 2 sections (scope and
-> requirements) written, then revised within Week 2 after finalizing the
-> data-independence decision (see Section 10). These will be extended weekly
-> as the project develops.
+> Draft status: Weeks 1-3 define the project, requirements and proposed design.
+> Week 4 adds the first generator prototype and preliminary checks; full
+> system validation remains future work.
 
 ## 1. Introduction
 
@@ -269,6 +268,9 @@ only a rule constraint was injected, the classifier labels the deviation
 
 ## 13. Methodology (Week 3)
 
+Sections 13-17 describe the proposed design, not a completed pipeline. As of
+Week 4, only the generator prototype described in Sections 18-24 is implemented.
+
 The engineering approach follows a simulation-based evaluation methodology.
 Rather than evaluating a deployed system on confidential production data, the
 project reproduces the essential decision chain of a replenishment system
@@ -279,11 +281,11 @@ This fits the problem for three reasons:
    true demand is known, so forecast accuracy can be measured against demand
    rather than against stock-out-censored sales - something impossible with
    real retail data.
-2. **The evaluation tool itself can be verified.** A controllable
-   error-injection emulator can produce forecasts with a precisely known
-   cause, so the evaluation framework's deviation-cause classification can be
-   proven correct with known-answer tests before it is trusted (Section 15,
-   Figure 3.2).
+2. **The evaluation tool can be tested under controlled conditions.** A
+   controllable emulator can create specified forecast-error patterns; separate
+   simulator scenarios can impose stock or rule limits. Known-answer tests can
+   check the evaluator on those scenarios, but do not establish universal
+   correctness (Section 15, Figure 3.2).
 3. **It is reproducible and data-independent.** A single seed regenerates the
    whole world and the whole pipeline, with no database, external API, or real
    data file (NFR-02, NFR-04), so anyone can reproduce every result.
@@ -318,7 +320,9 @@ else is library/CLI code.
 **Figure 3.1 - High-Level System Architecture** (docs/design/architecture.png;
 editable source: docs/design/architecture.mmd and the rendering script).
 
-Figure 3.1 presents the proposed architecture. The Synthetic World Generator
+Figure 3.1 presents the proposed architecture. The current diagram omits the
+Forecaster-to-Simulator arrow and some routes are unclear; the intended flow is
+described below and the figure requires correction in later design work. The Synthetic World Generator
 sends the daily sales history to the Forecaster, and the world rules, catalog,
 and warehouse state to the Replenishment Simulator. The Forecaster produces
 forecasts that the Simulator turns into daily ship decisions by applying the
@@ -342,13 +346,14 @@ it (see Table C in docs/design/design-decisions.md).
 **Figure 3.2 - Forecaster Self-Validation (Known-Answer Loop)**
 (docs/design/emulator-selfvalidation.png).
 
-Figure 3.2 details how the evaluation framework is verified. The emulator (2a)
-injects a deviation with a single known cause (bias, variance, seasonal drift,
-or a seeded stock/rule limit); the Simulator applies the rules; the Evaluation
-Framework classifies the deviation; and the known-answer test checks that the
-classified cause equals the injected cause (NFR-03b). Only after this loop
-passes is the framework applied to any other forecaster's output. This figure
-is the design-level guarantee behind the project's central claim.
+Figure 3.2 illustrates a proposed known-answer loop, but conflates forecast-error
+injection with stock or rule constraints; the figure requires correction in
+later design work. The intended approach is for the emulator to control forecast
+errors and for separate simulator scenarios to impose stock or rule limits. A
+known-answer test would compare the evaluator's output with the specified
+scenario. Such tests can check defined cases, but cannot by themselves prove
+correctness in all cases or resolve overlapping real-world causes. None of these
+components or tests has been implemented yet.
 
 **Component responsibilities and one complete data flow** are given in Tables
 B and C of docs/design/design-decisions.md (single store-product-day followed
@@ -404,36 +409,155 @@ synthetic world generator, where a generation config (10 stores, 200 products,
 and a hidden `true_demand`, printed as row counts and a sample to the
 terminal, with two identical-seed checksums as proof of determinism.
 
-## 18. Implementation Overview (Week 4 - Planned)
+## 18. Implementation Overview (Week 4 - In Progress)
 
-The first prototype will implement the synthetic world generator from the
-Week 3 architecture and address FR-01. Given a random seed and parameters
-such as store count, product count, historical duration, and future horizon,
-it is intended to generate fictional stores, products, a warehouse stock
-snapshot, daily historical sales, and future true demand. Store and product
-characteristics and category seasonality will be generated from illustrative
-parameters rather than calibrated to any confidential dataset. A planned
-example uses 10 stores, 200 products, and one year of daily history; the future
-period will be separate from the history.
+The first prototype implements a synthetic world generator addressing FR-01.
+A seed and command-line parameters determine the store and product counts,
+historical duration, future horizon, and start date. The generator creates
+fictional store and product catalogs, a warehouse stock snapshot, daily
+historical sales, and a separate future true-demand period. Illustrative
+category seasonality and store/product characteristics are generated without
+using confidential records or real-data-derived parameters.
 
-For this first prototype, historical sales are planned as a simplified
-synthetic series without reconstructing a complete past inventory and
-replenishment process. Future demand is an independently accessible
-simulation output for later evaluation, not an input to a forecaster. The
-prototype will report table sizes and sample records, and repeated runs with
-the same configuration and seed will be compared. This is planned work, not
-an implemented or verified result. Forecasting, replenishment decisions,
-metrics, attribution, the dashboard, and a full historical stock simulation
-remain outside the Week 4 prototype. No real retailer data, proprietary
-parameters, or database connection will be used.
+The historical sales series is a simplified demand-based series: it does not
+simulate historical inventory, stock-outs or replenishment. Future demand is
+provided separately for later evaluation, and no forecaster is implemented.
+The default run (10 stores, 200 products, 365 historical days and 28 future
+days) produced 730,000 historical sales rows and 56,000 future-demand rows.
+Two runs with seed 42 produced matching checksums for all five tables in the
+current environment. Initial automated generator checks are recorded in
+Section 20; full system validation remains future work.
+Forecasting, replenishment decisions, metrics, attribution, and the dashboard
+remain unimplemented. The prototype does not use a database or save datasets.
+
+**Figure 4.1 - Synthetic world generator demonstration (terminal output).**
+The [first run](../evidence/week-04/run-1.txt) shows the five table row counts,
+three fictional sample rows per table, and table checksums. The [second
+run](../evidence/week-04/run-2.txt) used the same command and seed; the
+[byte comparison](../evidence/week-04/comparison.txt) reports no differences
+between the two captured outputs. Both runs were performed on 4 November 2026
+with Python 3.12.10 and the dependency versions described in Section 19.
+This demonstrates repeatability for this configuration and environment, not
+statistical realism or validation of the unimplemented components. The
+samples contain only generated fictional data; no confidential records or
+real-data-derived parameters were used. The README explains how to reproduce
+the comparison.
 
 ## 19. Development Environment and Technologies (Week 4)
 
 The development environment uses Python 3.12.10 and Git 2.55.0 on Windows.
 An isolated `.venv` was created using Python's `venv` module. NumPy 2.5.3 and
 pandas 3.0.6 are specified in `requirements.txt` and were installed in this
-virtual environment. The initial entry point, `src/rdq/__main__.py`, imports
-both packages and prints their versions; it does not generate data. Installation
-and execution commands are documented in the README. The environment was
-checked by running this entry point and `python -m pip check` inside `.venv`;
-both completed successfully.
+virtual environment. The initial environment-check entry point was later
+replaced by `python -m src.rdq`, which runs the generator. Installation and
+execution commands are documented in the README. The entry point and
+`python -m pip check` both completed successfully in `.venv`. A separate clean
+virtual environment was also created on 4 November 2026; installation from
+`requirements.txt`, `pip check`, the
+default run and all eight tests succeeded. Its default output matched the
+recorded first run byte for byte in the same Python environment.
+
+| Component | Actual technology | Role and reason |
+|---|---|---|
+| Language and environment | Python 3.12.10, `venv`, Windows | Python provides a locally runnable CLI; `venv` isolates dependencies. |
+| Libraries | NumPy 2.5.3, pandas 3.0.6 | NumPy generates seeded random quantities and pandas holds the tabular outputs. |
+| Testing | Python standard-library `unittest` | Runs preliminary checks without an additional test dependency. |
+| Data and database | Generated in memory; no database | Keeps the prototype self-contained and independent of confidential data. |
+| Version control | Git 2.55.0; GitHub repository | Git records development history; GitHub hosts the project and issues. |
+
+## 20. Preliminary Generator Validation (Week 4)
+
+The following checks were run on 4 November 2026 using Python 3.12.10 and the
+standard-library `unittest` runner. The small test world has 3 stores, 5
+products, 4 historical days and 2 future days. The command
+`.venv\Scripts\python -m unittest discover -s tests -v` ran 8 tests; all 8
+passed. These results apply to the generator prototype only, not to the
+unimplemented forecasting and evaluation components.
+
+| ID | Input / check | Expected result | Observed result | Status |
+|---|---|---|---|---|
+| P01 | Small world (3 stores, 5 products, 4 history days, 2 future days) | Five tables with 3, 5, 5, 60 and 30 rows respectively | Expected tables and counts returned | Pass |
+| P02 | Same settings and seed 42, generated twice | Each corresponding table is identical | All five DataFrames matched | Pass |
+| P03 | Same small-world settings, seed 42 versus 43 | Historical sales output changes | Sales tables differed | Pass |
+| P04 | Small-world references and quantities | Valid store/product references, unique date-store-product rows and nonnegative quantities | Checks passed for historical sales, future demand and warehouse stock | Pass |
+| P05 | Start date 2024-02-27, including leap day | Contiguous history and future dates, with future strictly after history | Expected dates and warehouse snapshot date matched | Pass |
+| P06 | Minimum dimensions of 1 and seed 0 | One row per table and a separate future date | Expected rows and dates returned | Pass |
+| P07 | Zero or negative sizes/durations, or negative seed | Invalid configuration rejected | ValueError raised for each case | Pass |
+| P08 | CLI with zero stores, negative seed or invalid date | Nonzero exit and informative error, without a traceback | All three were rejected as expected | Pass |
+
+No generator defect was observed in these preliminary checks. They do not
+establish statistical realism, performance at larger scales, or the accuracy
+of the future forecasting, replenishment or attribution logic.
+
+## 21. Prototype Implementation (Week 4)
+
+**Feature:** Seeded synthetic retail world generation. **Requirement:** FR-01,
+implemented for the limited generator scope described in Section 18.
+
+**Input:** The CLI accepts a non-negative seed, positive store and product
+counts, positive history and future durations, and an ISO start date. The
+reproducible demonstration uses seed 42 and the defaults described in
+Section 18. Invalid values are rejected rather than generating a world.
+
+**Processing:** `src/rdq/__main__.py` parses arguments and constructs the
+validated `WorldConfig`. In `src/rdq/generator.py`, `generate_world` uses a
+seeded NumPy generator to create fictional store and product characteristics
+and warehouse quantities. It combines illustrative category seasonality with
+store and product factors and draws daily quantities from a Poisson
+distribution. It builds separate history and future DataFrames over consecutive,
+non-overlapping dates. These values are simulated assumptions, not estimates
+from real data.
+
+**Output and architecture:** The generator returns five pandas tables:
+`stores`, `products`, `warehouse`, `sales_history`, and `true_demand`. The CLI
+prints row counts, three examples and a checksum for each table. This implements
+the Synthetic World Generator component of the Week 3 design; the planned
+forecaster, replenishment simulator, evaluation framework and dashboard are not
+connected or implemented yet. Figure 4.1 in Section 18 shows the actual output.
+The preliminary checks in Section 20 test selected generator behavior only.
+
+## 22. Technical Challenges and Solutions (Week 4)
+
+During environment setup, a combined Git commit command failed because of
+Windows `cmd.exe` quoting. The command was retried using PowerShell, after
+which the local environment setup commit `3fd8bdb` was created. The commit is
+verifiable in the local Git history; no separate failure transcript was saved.
+
+The generator's normal, boundary and invalid-input checks found no defect, so
+no generator bug fix is claimed. Separating future demand from historical sales
+and using a fixed seed were design decisions for the prototype, not fixes for
+observed failures. The comparison in Figure 4.1 and the tests in Section 20
+record the resulting behavior.
+
+## 23. Development Process - Stage 1 (Week 4)
+
+| Field | Actual record |
+|---|---|
+| Date | 4 November 2026 |
+| Objective | Demonstrate an input-to-output prototype for FR-01. |
+| Implemented functionality | Seeded generation of fictional stores, products, warehouse stock, sales history and separate future demand, with CLI summaries. |
+| Technical decision | Generate values in memory from illustrative parameters and a seed, keeping the history and future periods separate. |
+| Problem and solution | A Windows command-quoting issue interrupted the setup commit; retrying with PowerShell succeeded. No generator defect was observed in preliminary checks. |
+| Related issue | [Issue #3](https://github.com/KaganxSahin/replenishment-decision-quality/issues/3) tracks the Week 4 generator prototype. |
+| Commit | [3fd8bdb](https://github.com/KaganxSahin/replenishment-decision-quality/commit/3fd8bdb) initializes the environment; [63f6f72](https://github.com/KaganxSahin/replenishment-decision-quality/commit/63f6f72) implements the generator and preliminary tests. |
+| Evidence | Figure 4.1: [first run](../evidence/week-04/run-1.txt), [second run](../evidence/week-04/run-2.txt), and [comparison](../evidence/week-04/comparison.txt). |
+| Next step | Week 5: develop the forecaster interface and error-injection emulator, followed by the replenishment simulator. |
+
+The separate [Stage 1 record](development-stage-1.md) and
+[Week 4 progress record](weekly-progress/week04.md) provide further details.
+
+## 24. Current Limitations and Next Steps (Week 4)
+
+The history is a demand-based approximation, not simulated historical sales
+subject to inventory constraints. Warehouse inventory is one snapshot, not a
+changing stock ledger; the generated future demand is available separately,
+but no forecaster or evaluation pipeline consumes it yet. The examples and
+preliminary checks do not demonstrate statistical realism, large-scale
+performance, or production-system accuracy.
+
+Week 5 priorities are the forecaster interface and controllable emulator,
+then a rule-based replenishment simulator. Forecast metrics, deviation-cause
+analysis and a dashboard remain planned, not implemented. Full validation,
+including known-answer scenarios and performance checks, remains future work;
+controlled tests establish behavior for specified scenarios, not universal
+correctness or real-world causal attribution.

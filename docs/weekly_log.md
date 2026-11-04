@@ -44,3 +44,20 @@
 | **Tests performed** | None yet - design phase; Week 4 will add the first runnable code (generator). |
 | **Report sections updated** | Sections 13-17 in `docs/report_draft.md`. |
 | **Next week's plan** | Week 4 prototype: implement the synthetic world generator, demonstrate determinism (same seed -> identical output), and capture terminal output as evidence (issue #3). |
+
+## Week 4 - First Working Prototype
+
+| Field | Content |
+|---|---|
+| **Week** | 4 (4 November 2026) |
+| **Tasks planned** | Implement an FR-01 generator prototype, verify preliminary behavior, capture a repeatable demonstration, and document Development Stage 1. |
+| **Tasks completed locally** | Prepared the Python environment; implemented seeded generation of fictional stores, products, a warehouse snapshot, historical sales and separate future demand; added a CLI and preliminary tests; recorded demonstration output; updated the report, README and Stage 1 record. |
+| **Git commits** | [3fd8bdb](https://github.com/KaganxSahin/replenishment-decision-quality/commit/3fd8bdb) initializes the development environment; [63f6f72](https://github.com/KaganxSahin/replenishment-decision-quality/commit/63f6f72) implements the generator and preliminary tests. |
+| **Problems encountered** | A combined Git commit command failed because of Windows `cmd.exe` quoting. No generator defect was observed in the preliminary checks. |
+| **Solutions attempted** | Retried the Git command using PowerShell and created the local setup commit. No generator bug fix is claimed. |
+| **Tests performed** | Eight generator `unittest` tests passed, covering valid, boundary and invalid inputs, same and different seeds, references, quantities and date separation. See report Section 20. |
+| **Evidence** | [First run](../evidence/week-04/run-1.txt), [second run](../evidence/week-04/run-2.txt) and [comparison](../evidence/week-04/comparison.txt): the captured seed-42 outputs match byte for byte in the recorded environment. |
+| **Report sections updated** | Sections 18-24: implementation, environment, preliminary checks, prototype, challenges, Stage 1, limitations and next steps. |
+| **Next week's plan** | Week 5: implement the forecaster interface and controllable error-injection emulator, then the rule-based replenishment simulator. |
+
+See the [Stage 1 record](development-stage-1.md) and [Week 4 progress record](weekly-progress/week04.md) for details. Full-system validation remains future work.

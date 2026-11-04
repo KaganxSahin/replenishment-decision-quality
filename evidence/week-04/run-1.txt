@@ -1,0 +1,31 @@
+Synthetic retail world | seed=42
+
+stores: 10 rows | SHA-256 86ececa3f66e07a49a57420c1e177dbeffafe17e4e482c6b3dba9f24f30bdc40
+ store_id store_size  region
+        1          S central
+        2          L   south
+        3          M   south
+
+products: 200 rows | SHA-256 bacdb98b460c9e7ca2d757d3f245351f7964f7e9ceabbcbc8a377f795c211ee4
+ product_id category  base_price  pack_size
+          1  dresses       79.25          2
+          2 trousers       46.31          2
+          3     tops       59.77          1
+
+warehouse: 200 rows | SHA-256 48cf7957fcf9f9607cab83d636f9c478961b2e8bba583a4667a898b1cde265a0
+      date  product_id  qty_available
+2024-12-30           1            121
+2024-12-30           2            699
+2024-12-30           3            223
+
+sales_history: 730,000 rows | SHA-256 345869c0619c47620a4e4fa035185aa776da72599117809cae1b1583e8fb76c0
+      date  store_id  product_id  qty
+2024-01-01         1           1    1
+2024-01-01         1           2    3
+2024-01-01         1           3    0
+
+true_demand: 56,000 rows | SHA-256 45e9906e2511a9a2a03e662a8858c60fa59d603917e53df9adaf69a8cb9b8314
+      date  store_id  product_id  qty_true
+2024-12-31         1           1         1
+2024-12-31         1           2         1
+2024-12-31         1           3         0
