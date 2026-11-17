@@ -661,8 +661,10 @@ repeatability behavior, and its remaining optional-model limitation in
 replenishment simulation, evaluation metrics, dashboard handoff, and cause
 classification limitation in [development-stage-3.md](development-stage-3.md).
 The detailed weekly record is in [week05.md](weekly-progress/week05.md) and the
-[weekly log](weekly_log.md). These records describe local implementation and
-verification only; no Week 5 commit or push is claimed here.
+[weekly log](weekly_log.md). The implementation commit is
+[9fa5d47](https://github.com/KaganxSahin/replenishment-decision-quality/commit/9fa5d47dbfcbba332bd31494a32af780450ea6a2); the documentation and evidence
+commit is [d000103](https://github.com/KaganxSahin/replenishment-decision-quality/commit/d00010385d81f161504c5ce5ca41c08e814d60f7). Both were pushed to `origin/main`.
+GitHub issue statuses were not changed during this step.
 
 ## 30. Current Limitations and Next Steps
 
