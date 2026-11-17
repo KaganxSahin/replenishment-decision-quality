@@ -1,0 +1,3 @@
+Comparing files EVIDENCE\WEEK-05\pipeline-run.txt and EVIDENCE\WEEK-05\PIPELINE-RUN-REPEAT.TXT
+FC: no differences encountered
+

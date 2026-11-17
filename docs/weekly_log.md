@@ -61,3 +61,24 @@
 | **Next week's plan** | Week 5: implement the forecaster interface and controllable error-injection emulator, then the rule-based replenishment simulator. |
 
 See the [Stage 1 record](development-stage-1.md) and [Week 4 progress record](weekly-progress/week04.md) for details. Full-system validation remains future work.
+
+## Week 5 - Forecaster, Replenishment Simulation, Evaluation, and Dashboard
+
+| Field | Content |
+|---|---|
+| **Week** | 5 (17 November 2026) |
+| **Tasks planned** | Implement the emulator and forecaster interface, replenishment simulation, initial metrics and cause analysis, and the first dashboard; compare implementation with the Week 3 architecture and record actual technical evidence. |
+| **Tasks completed locally** | Implemented `Forecaster` and `ErrorInjectionEmulator`; added replenishment simulation with minimum-stock, pack-size, warehouse-stock, inventory, sales, and stock-out logic; added WAPE/MAPE/bias metrics and heuristic cause summaries; added the common pipeline and Streamlit dashboard. Documented architecture differences and actual CLI/test outputs. |
+| **Requirements addressed** | FR-02, FR-04, FR-05, FR-06, and FR-07 are represented in the local prototype. The optional statistical/ML forecaster (FR-03) is not implemented. |
+| **Technical decisions** | The forecaster receives historical sales only; future truth is used downstream by the simulation/evaluation flow. CLI and dashboard share one pipeline. The simulator returns combined decision/outcome rows. Cause labels use the fixed priority stock constraint → rule constraint → model error → other, and are heuristic rather than independently inferred causal proof. |
+| **Environment** | Windows; Python 3.12.10; NumPy 2.5.3; pandas 3.0.6; Streamlit 1.67.0; standard-library `unittest`. `pip check` reported no broken requirements. |
+| **Problems encountered and solutions** | Streamlit AppTest exposed package-relative imports; dashboard imports were switched to absolute `src.rdq` paths. Streamlit 1.67 required supported dataframe width arguments; calls were updated. A simulator rule-check edge case that mislabeled a pack-size restriction was corrected to test for actual minimum-stock or pack-size limiting. |
+| **Tests and observed result** | The full suite ran 27 tests and passed, including metric hand-checks, simulator behavior, pipeline repeatability, and dashboard smoke/filter coverage. Default seed-42 runs produced byte-identical CLI output. Dedicated known-answer cause-classification tests and the planned performance run remain for Week 6. |
+| **Evidence** | [First pipeline run](../evidence/week-05/pipeline-run.txt), [repeat run](../evidence/week-05/pipeline-run-repeat.txt), [byte comparison](../evidence/week-05/repeatability-check.txt), [test output](../evidence/week-05/tests.txt), and [architecture comparison](design/architecture-comparison-week5.md). |
+| **Stage records** | [Stage 2 - Forecaster and Error Emulator](development-stage-2.md); [Stage 3 - Replenishment and Initial Evaluation](development-stage-3.md); [Week 5 progress record](weekly-progress/week05.md). |
+| **Commit / GitHub status** | Work is local and uncommitted; no Week 5 commit, push, or issue-status update is claimed. GitHub preparation is tracked as a separate approved step. |
+| **Next week's plan** | Week 6: implement known-answer classification tests for isolated and combined causes, broaden metric and boundary validation, and run the planned performance test. |
+
+The Week 5 record describes tested synthetic prototype behavior only. It does not
+claim that the cause labels provide universally correct or production-ready
+causal attribution.

@@ -1,0 +1,33 @@
+test_dashboard_renders_metrics_and_filters_without_exceptions (test_dashboard.DashboardSmokeTests.test_dashboard_renders_metrics_and_filters_without_exceptions) ... 2026-11-17 10:02:41.202 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bias_applies_to_trailing_baseline (test_forecaster.ErrorInjectionEmulatorTests.test_bias_applies_to_trailing_baseline) ... ok
+test_different_seed_changes_noisy_forecasts (test_forecaster.ErrorInjectionEmulatorTests.test_different_seed_changes_noisy_forecasts) ... ok
+test_fit_rejects_invalid_quantities_and_duplicate_grain (test_forecaster.ErrorInjectionEmulatorTests.test_fit_rejects_invalid_quantities_and_duplicate_grain) ... ok
+test_fit_rejects_missing_columns_and_empty_history (test_forecaster.ErrorInjectionEmulatorTests.test_fit_rejects_missing_columns_and_empty_history) ... ok
+test_forecast_rows_and_dates_follow_history_pairs (test_forecaster.ErrorInjectionEmulatorTests.test_forecast_rows_and_dates_follow_history_pairs) ... ok
+test_future_demand_is_not_an_input_to_forecaster (test_forecaster.ErrorInjectionEmulatorTests.test_future_demand_is_not_an_input_to_forecaster) ... ok
+test_invalid_emulator_settings_are_rejected (test_forecaster.ErrorInjectionEmulatorTests.test_invalid_emulator_settings_are_rejected) ... ok
+test_predict_rejects_invalid_horizon (test_forecaster.ErrorInjectionEmulatorTests.test_predict_rejects_invalid_horizon) ... ok
+test_predict_requires_fit (test_forecaster.ErrorInjectionEmulatorTests.test_predict_requires_fit) ... ok
+test_same_seed_reproduces_forecasts (test_forecaster.ErrorInjectionEmulatorTests.test_same_seed_reproduces_forecasts) ... ok
+test_cli_rejects_invalid_arguments_without_traceback (test_generator.GeneratorPreliminaryTests.test_cli_rejects_invalid_arguments_without_traceback) ... ok
+test_dates_are_contiguous_and_future_is_separate (test_generator.GeneratorPreliminaryTests.test_dates_are_contiguous_and_future_is_separate) ... ok
+test_different_seed_changes_generated_data (test_generator.GeneratorPreliminaryTests.test_different_seed_changes_generated_data) ... ok
+test_expected_tables_and_row_counts (test_generator.GeneratorPreliminaryTests.test_expected_tables_and_row_counts) ... ok
+test_invalid_dimensions_and_seed_are_rejected (test_generator.GeneratorPreliminaryTests.test_invalid_dimensions_and_seed_are_rejected) ... ok
+test_minimum_valid_dimensions_and_zero_seed (test_generator.GeneratorPreliminaryTests.test_minimum_valid_dimensions_and_zero_seed) ... ok
+test_non_integer_dimensions_and_boolean_seed_are_rejected (test_generator.GeneratorPreliminaryTests.test_non_integer_dimensions_and_boolean_seed_are_rejected) ... ok
+test_references_unique_grain_and_nonnegative_quantities (test_generator.GeneratorPreliminaryTests.test_references_unique_grain_and_nonnegative_quantities) ... ok
+test_same_seed_reproduces_all_tables (test_generator.GeneratorPreliminaryTests.test_same_seed_reproduces_all_tables) ... ok
+test_mapes_zero_actuals_and_empty_data_are_handled (test_simulator.EvaluationMetricTests.test_mapes_zero_actuals_and_empty_data_are_handled) ... ok
+test_metrics_match_hand_calculated_values_and_aggregate_segments (test_simulator.EvaluationMetricTests.test_metrics_match_hand_calculated_values_and_aggregate_segments) ... ok
+test_end_to_end_pipeline_is_reproducible (test_simulator.PipelineIntegrationTests.test_end_to_end_pipeline_is_reproducible) ... ok
+test_invalid_pack_size_is_rejected (test_simulator.ReplenishmentSimulationTests.test_invalid_pack_size_is_rejected) ... ok
+test_invalid_simulation_config_is_rejected (test_simulator.ReplenishmentSimulationTests.test_invalid_simulation_config_is_rejected) ... ok
+test_mismatched_forecast_and_demand_keys_are_rejected (test_simulator.ReplenishmentSimulationTests.test_mismatched_forecast_and_demand_keys_are_rejected) ... ok
+test_rules_stock_cap_and_inventory_carry_are_simulated (test_simulator.ReplenishmentSimulationTests.test_rules_stock_cap_and_inventory_carry_are_simulated) ... ok
+
+----------------------------------------------------------------------
+Ran 27 tests in 22.677s
+
+OK

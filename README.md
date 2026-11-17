@@ -21,14 +21,15 @@ It builds a **synthetic retail world** - a fictional multi-category retail
 chain with stores, products, and a warehouse - whose behaviour is informed
 only by general, publicly known retail domain knowledge (e.g., that demand is
 seasonal, that stores and products differ in popularity), never by any
-confidential dataset. Inside this world, a **pluggable forecaster**
-component produces demand forecasts: a built-in parametric emulator that can
-inject forecast errors with precisely known causes (used to validate the
-framework itself), and optionally a real statistical/ML model trained purely
-on the synthetic history. A rule-based replenishment simulator turns forecasts
-into daily decisions, and an evaluation framework measures their quality
-against a known ground truth. The intended pipeline will run end to end from a single command, with no
-database, external file, or real data of any kind.
+confidential dataset. The current pipeline includes a **pluggable forecaster**
+contract and a built-in parametric emulator with controllable bias, noise
+variance, and seasonal drift. An optional statistical/ML model using synthetic
+history is a future extension. A rule-based replenishment simulator turns
+forecasts into daily decisions, and an evaluation framework measures forecasts
+against generated true demand. The current local pipeline runs end to end from
+one CLI command, with no database, external data file, or real data of any kind.
+Cause labels are currently heuristic simulator outputs; known-answer
+cause-classification validation remains future work.
 
 ## Objective
 
@@ -58,42 +59,39 @@ Develop a framework that can:
   product ranges.
 - ML engineers who maintain forecasting models and need systematic feedback.
 
-## Planned Technologies
+## Technologies
 
 - Python 3.12
-- NumPy / pandas (data processing and synthetic data generation)
-- LightGBM / statsmodels (optional real forecasting model)
-- Streamlit (interactive dashboard)
-- pytest (testing)
+- NumPy / pandas (synthetic data generation and processing)
+- Streamlit 1.67.0 (interactive dashboard)
+- Python standard-library `unittest` (testing)
 - Git & GitHub (version control)
+- Optional statistical/ML forecaster: planned, not implemented
 
-No database connector is required to run the project: the default pipeline
-is fully self-contained and uses only generated or committed synthetic data.
-Technologies may evolve during the project.
+No database connector is required: the current pipeline uses generated in-memory
+data only, and no dataset files are committed. Technologies may evolve during
+the project.
 
-## Planned Features
+## Features and Status
 
-- FR-01: Parametric, seed-based synthetic retail world generation (no real data)
-- FR-02: Pluggable forecaster interface with a built-in error-injection emulator
-- FR-03: Optional real forecasting model using the same interface
-- FR-04: Rule-based replenishment simulation (minimum stock, pack size, warehouse availability)
-- FR-05: Forecast-accuracy metrics (WAPE, MAPE, bias) aggregated by store, category, and season
-- FR-06: Deviation-cause classification (model error / stock constraint / rule constraint / other)
-- FR-07: Interactive dashboard with store, category, and date filters
+- FR-01: Seeded synthetic retail world generation - implemented
+- FR-02: Pluggable forecaster interface and error-injection emulator - implemented
+- FR-03: Optional real forecasting model - not implemented
+- FR-04: Rule-based replenishment simulation - implemented
+- FR-05: WAPE/MAPE/bias metrics by segment - implemented
+- FR-06: Heuristic deviation-cause labels; known-answer validation remains outstanding
+- FR-07: Interactive dashboard with store, category, and date filters - implemented
 
 ## Scope
 
-The first version covers: the synthetic world generator, the pluggable
-forecaster interface with its built-in emulator, an optional real forecasting
-model, the rule-based replenishment simulator, the evaluation framework
-(metrics and deviation-cause classification, validated with known-answer
-tests), the dashboard, and automated tests. No real or confidential data is
-used anywhere - not for storage, and not for calibrating any synthetic
-parameter. Excluded: modifying a production replenishment engine, automatic
-model retraining, real-time streaming analysis, customer-level analysis, and
-price optimization. The full specification with non-functional requirements,
-user stories, and milestones is in `docs/requirements.md`; planned work is
-tracked in
+The first version includes the synthetic world generator, emulator,
+replenishment simulator, evaluation framework, and dashboard. Known-answer
+validation of cause classification is still outstanding. No real or confidential
+data, or parameters derived from it, are used. Excluded: modifying a production
+replenishment engine, automatic model retraining, real-time streaming analysis,
+customer-level analysis, and price optimization. The full specification with
+non-functional requirements, user stories, and milestones is in
+`docs/requirements.md`; planned work is tracked in
 [GitHub Issues](https://github.com/KaganxSahin/replenishment-decision-quality/issues).
 
 ## Development Setup (Windows)
@@ -106,59 +104,68 @@ python -m venv .venv
 .venv\Scripts\python -m src.rdq --seed 42
 ```
 
-Run the preliminary generator tests with:
+Run the full test suite with:
 
 ```cmd
 .venv\Scripts\python -m unittest discover -s tests -v
 ```
 
-The generator command creates five tables in memory: stores, products, a warehouse
-stock snapshot, historical sales and future true demand. It prints row counts,
-three sample rows and a checksum for each table; no data files are saved. The
-prototype defaults to 10 stores, 200 products, 365 historical days and 28 future
-days. Use `--help` to see the seed, size, date and horizon options. Repeated
-runs with the same settings can be compared using the checksums; reproduce them
-with the same Python and dependency versions.
+The CLI generates the world, fits the error-injection emulator on historical
+sales, forecasts the separate future horizon, simulates replenishment, and
+prints evaluation metrics and cause summaries. All tables remain in memory;
+future true-demand samples are withheld from CLI output. Defaults are 10 stores,
+200 products, 365 historical days, and 28 future days. Use `--help` for options.
 
-To repeat the Week 4 demonstration and compare the two captured outputs, run
-these commands from the repository root after setup. The output files are
-written to the Windows temporary directory, not into the repository:
+Launch the interactive dashboard separately:
 
 ```cmd
-.venv\Scripts\python -m src.rdq --seed 42 > "%TEMP%\rdq-week04-run-1.txt"
-.venv\Scripts\python -m src.rdq --seed 42 > "%TEMP%\rdq-week04-run-2.txt"
-fc /b "%TEMP%\rdq-week04-run-1.txt" "%TEMP%\rdq-week04-run-2.txt"
+.venv\Scripts\python -m streamlit run src\rdq\dashboard.py --server.address 127.0.0.1 --server.port 8501 --server.headless true
 ```
 
-The captured [first run](evidence/week-04/run-1.txt),
-[second run](evidence/week-04/run-2.txt), and
-[comparison](evidence/week-04/comparison.txt) are the demonstration evidence.
+The dashboard exposes synthetic-run settings, store/category/date filters,
+accuracy and outcome metrics, a cause summary, and simulation records.
 
-The historical sales series is a simplified synthetic demand-based series; it
-does not yet model stock-outs or a past replenishment process. Forecasts,
-replenishment decisions, evaluation and the dashboard are not implemented.
-The `.venv/` directory is ignored by Git. Installation needs access to the
-Python package index or a local package cache.
+Week 5 evidence: [pipeline output](evidence/week-05/pipeline-run.txt),
+[repeat run](evidence/week-05/pipeline-run-repeat.txt),
+[byte comparison](evidence/week-05/repeatability-check.txt), and
+[test results](evidence/week-05/tests.txt). The comparison reports no differences
+for identical seed-42 runs in the recorded environment. The Week 4 generator
+demonstration remains available at [first run](evidence/week-04/run-1.txt),
+[second run](evidence/week-04/run-2.txt), and
+[comparison](evidence/week-04/comparison.txt).
+
+The generated history is still a simplified demand-based series and does not
+model historical stock-outs or replenishment. Warehouse availability is a
+single opening snapshot that depletes during the simulated horizon; replenishment
+inflows are not modeled. Cause labels use a deterministic heuristic and have not
+yet passed dedicated known-answer classification tests. The optional real
+forecaster is not implemented. `.venv/` is ignored by Git; installation requires
+package-index access or a local package cache.
 
 ## Current Status
 
-Week 4 prototype - the first synthetic world generator is implemented.
-The default example produces 730,000 historical sales rows and 56,000 future
-demand rows. Two runs with seed 42 produced matching checksums for all five
-tables in the current environment. Eight preliminary generator tests passed;
-the checks and their results are recorded in Section 20 of
-`docs/report_draft.md`. The demonstration outputs and comparison are in
-`evidence/week-04/`.
+The Week 5 prototype implements the synthetic generator, pluggable forecaster
+contract with its built-in error-injection emulator, replenishment simulation,
+initial evaluation metrics and heuristic cause summaries, and a Streamlit
+dashboard. The default seed-42 run produces 730,000 historical rows, 56,000
+forecasts, and 56,000 simulation records. Same-seed CLI output matched byte for
+byte in the recorded environment. The current suite ran 27 tests successfully;
+this is not the comprehensive Week 6 validation, and dedicated known-answer
+cause-classification tests remain outstanding.
+
+See the [Week 5 architecture-to-implementation comparison](docs/design/architecture-comparison-week5.md),
+[Stage 2 record](docs/development-stage-2.md), [Stage 3 record](docs/development-stage-3.md),
+and [Week 5 progress record](docs/weekly-progress/week05.md). The report contains
+the Week 4 generator evidence and the current Week 5 implementation, environment,
+technical boundaries, and next steps.
 
 Week 3 architecture and technical design are documented in `docs/design/`:
 
 - [High-level architecture diagram](docs/design/architecture.png) (Figure 3.1)
   and the [self-validation / known-answer loop](docs/design/emulator-selfvalidation.png)
-  (Figure 3.2), with editable sources.
-- [design-decisions.md](docs/design/design-decisions.md) - traceability,
+  (Figure 3.2), with editable sources. These are conceptual diagrams and some
+  routes require later correction, as noted in the report.
+- [Design decisions](docs/design/design-decisions.md) - traceability,
   component sheet, data flow, risks, ADR-01 / ADR-02.
-- [component-interfaces.md](docs/design/component-interfaces.md) - forecaster
+- [Component interfaces](docs/design/component-interfaces.md) - forecaster
   interface and data dictionary.
-
-Report Sections 13-17 (Methodology, Proposed System, System Architecture,
-Technology Selection, Design Decisions) are in `docs/report_draft.md`.

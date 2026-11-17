@@ -3,11 +3,12 @@
 **Project:** Replenishment Decision Quality: A Simulation-Based Evaluation and
 Monitoring Framework for ML-Driven Retail Stock Distribution
 **Author:** Kagan Sahin
-**Date:** Updated 4 November 2026
+**Date:** Updated 17 November 2026
 
-> Draft status: Weeks 1-3 define the project, requirements and proposed design.
-> Week 4 adds the first generator prototype and preliminary checks; full
-> system validation remains future work.
+> Draft status: Weeks 1-3 define the project, requirements and design. Week 4
+> delivered the initial synthetic-world generator. Week 5 added the emulator,
+> replenishment simulation, initial evaluation, and dashboard. Full validation,
+> including known-answer cause-classification scenarios, remains future work.
 
 ## 1. Introduction
 
@@ -376,10 +377,11 @@ Two consequential decisions are recorded as ADRs (docs/design/design-decisions.m
   reproducibility without storing data, keeping the repo small and guaranteeing
   data independence by construction.
 
-The supporting stack is Python 3.12 with NumPy/pandas (generation and data
-processing; NumPy's `Generator`/`PCG64` provides the deterministic seeding
-cited in ADR-02), LightGBM/statsmodels for the optional real forecaster,
-Streamlit for the dashboard, and pytest for the known-answer and metric tests.
+The Week 3 proposal selected Python 3.12 with NumPy/pandas, LightGBM or
+statsmodels for a possible optional model, Streamlit for the dashboard, and
+pytest for tests. The Week 5 implementation uses the standard-library
+`unittest` runner and does not include LightGBM, statsmodels, or pytest. The
+installed Week 5 stack and actual versions are recorded in Section 26.
 
 ## 17. Design Decisions, Risks and Limitations (Week 3)
 
@@ -546,18 +548,137 @@ record the resulting behavior.
 The separate [Stage 1 record](development-stage-1.md) and
 [Week 4 progress record](weekly-progress/week04.md) provide further details.
 
-## 24. Current Limitations and Next Steps (Week 4)
+## 24. Week 4 Limitations and Handoff
 
-The history is a demand-based approximation, not simulated historical sales
-subject to inventory constraints. Warehouse inventory is one snapshot, not a
-changing stock ledger; the generated future demand is available separately,
-but no forecaster or evaluation pipeline consumes it yet. The examples and
-preliminary checks do not demonstrate statistical realism, large-scale
-performance, or production-system accuracy.
+At the end of Week 4, the prototype contained only the seeded synthetic-world
+generator. The history was a demand-based approximation, not simulated sales
+subject to inventory constraints. Warehouse inventory was a single snapshot,
+and forecasting, replenishment, evaluation, and dashboard functionality had not
+yet been implemented. The Week 4 evidence and preliminary generator checks in
+Sections 18-23 remain historical records of that milestone.
 
-Week 5 priorities are the forecaster interface and controllable emulator,
-then a rule-based replenishment simulator. Forecast metrics, deviation-cause
-analysis and a dashboard remain planned, not implemented. Full validation,
-including known-answer scenarios and performance checks, remains future work;
-controlled tests establish behavior for specified scenarios, not universal
-correctness or real-world causal attribution.
+## 25. Implementation Overview (Week 5)
+
+The Week 5 implementation extends the Week 4 generator into a runnable local
+pipeline. `src/rdq/forecaster.py` defines a `Forecaster` protocol and the
+`ErrorInjectionEmulator`. Its `fit` method accepts historical sales only; its
+`predict` method produces non-negative forecast quantities for a requested
+future horizon, using a trailing baseline and configurable bias, seasonal
+drift, variance, and seed. The future true-demand table is not passed to the
+forecaster.
+
+`src/rdq/simulator.py` applies minimum-stock and pack-size rules, allocates
+finite warehouse stock, carries store inventory across simulated days, and
+records shipped quantities, sales, lost sales, overstock, and stock-out flags.
+`src/rdq/evaluation.py` calculates WAPE, MAPE, and bias overall and by store,
+product category, season, and store-product pair. It also summarizes the
+simulator's assigned cause labels. The current cause labels are a deterministic
+heuristic with the priority stock constraint, rule constraint, model error,
+then other; they are not independently inferred by the evaluator and do not
+establish exclusive real-world causality.
+
+`src/rdq/pipeline.py` provides the shared `run_pipeline` orchestration used by
+the CLI and dashboard. `src/rdq/dashboard.py` provides Streamlit controls for
+synthetic run settings and store/category/date filters, and displays metrics,
+cause summaries, forecast-versus-demand charts, stock indicators, and records.
+The optional statistical/ML forecaster is not implemented.
+
+**Figure 5.1 - Week 5 end-to-end CLI output.** The actual default run is
+recorded in [pipeline-run.txt](../evidence/week-05/pipeline-run.txt). With seed
+42, the world contained 10 stores, 200 products, 200 warehouse rows, 730,000
+historical rows, and 56,000 future-demand rows; the pipeline produced 56,000
+forecasts and simulation records. The CLI withheld future-demand samples. The
+run's overall synthetic metrics were WAPE 0.5973, MAPE 0.5137, and bias 0.0711.
+These values apply only to this synthetic configuration and are not estimates
+of any real retailer's system performance.
+
+## 26. Development Environment and Technologies (Week 5)
+
+The project was run on Windows with Python 3.12.10 in the repository's
+`.venv`. The installed and pinned core versions are NumPy 2.5.3, pandas 3.0.6,
+and Streamlit 1.67.0. Tests use Python's standard-library `unittest`; the
+project does not use pytest, LightGBM, or statsmodels in this implementation.
+`python -m pip check` reported no broken requirements.
+
+| Component | Technology | Current use |
+|---|---|---|
+| Synthetic generation and numerical processing | NumPy 2.5.3, pandas 3.0.6 | Seeded world generation and in-memory DataFrames. |
+| Forecast emulator and simulation | Python 3.12.10, NumPy, pandas | Forecast generation, replenishment rules, inventory and outcomes. |
+| Evaluation and dashboard | pandas, Streamlit 1.67.0 | Metrics, cause summaries, interactive filtering and charts. |
+| Verification | `unittest` | 27 tests across generator, emulator, simulation, evaluation, pipeline, and dashboard. |
+| Data and external services | In-memory synthetic data; no database or API | No real data files, external service calls, or database connections are required for the run. |
+
+Install and run instructions are in the updated README. The CLI command is
+`.venv\Scripts\python -m src.rdq --seed 42`; launch the dashboard separately
+with `.venv\Scripts\python -m streamlit run src\rdq\dashboard.py`.
+
+## 27. Prototype Implementation (Week 5)
+
+**Implemented pipeline:** `generate_world` creates the synthetic world;
+`ErrorInjectionEmulator.fit` and `predict` use historical sales to generate
+forecasts; `simulate_replenishment` combines forecasts with generated future
+demand and inventory constraints; `evaluate_results` calculates segment metrics
+and summarizes simulator cause labels. `run_pipeline` returns the world,
+forecasts, combined simulation outcomes, and evaluation results. The CLI prints
+row counts, selected samples, metrics, and cause summaries. It does not persist
+any generated data.
+
+**Demonstration and repeatability:** [The first run](../evidence/week-05/pipeline-run.txt)
+and [the repeated run](../evidence/week-05/pipeline-run-repeat.txt) were
+executed with the same command and seed. The recorded
+[byte comparison](../evidence/week-05/repeatability-check.txt) reports no
+differences in the complete CLI outputs. The full test output is in
+[tests.txt](../evidence/week-05/tests.txt): 27 tests ran and passed. This
+verifies the tested implementation behavior in the recorded environment; it is
+not the comprehensive Week 6 validation and does not establish statistical
+realism or general causal-classification correctness.
+
+## 28. Technical Challenges and Solutions (Week 5)
+
+The first dashboard smoke-test run exposed import failures when Streamlit's
+`AppTest` loaded modules using package-relative imports. The dashboard imports
+were changed to the project's absolute `src.rdq` package paths. Streamlit 1.67
+also required the supported dataframe width argument; the calls were updated
+and the dashboard smoke/filter test passed in the final 27-test run.
+
+A simulator rule check initially treated a pack-size rounding case incorrectly
+when determining whether the business rule constrained the requested quantity.
+The condition was narrowed to the minimum-stock rule or an actual pack-size
+reduction, and the targeted simulator scenario and complete test suite passed.
+
+The architecture comparison also identified an intentional simplification that
+must not be overstated: the simulator returns a combined decisions/outcomes
+table, and the simulator—not the evaluator—assigns heuristic cause labels.
+The Week 5 report and README now state these boundaries. Dedicated known-answer
+cause-classification tests remain outstanding; no claim of completing them is
+made.
+
+## 29. Development Process - Stages 2 and 3 (Week 5)
+
+Stage 2 records the forecaster protocol, error emulator, inputs and outputs,
+repeatability behavior, and its remaining optional-model limitation in
+[development-stage-2.md](development-stage-2.md). Stage 3 records the
+replenishment simulation, evaluation metrics, dashboard handoff, and cause
+classification limitation in [development-stage-3.md](development-stage-3.md).
+The detailed weekly record is in [week05.md](weekly-progress/week05.md) and the
+[weekly log](weekly_log.md). These records describe local implementation and
+verification only; no Week 5 commit or push is claimed here.
+
+## 30. Current Limitations and Next Steps
+
+The current prototype is a controlled synthetic demonstration, not a production
+monitoring tool. Historical sales are generated from demand without historical
+stock-outs. Warehouse stock is an opening snapshot that depletes during the
+horizon; no warehouse replenishment inflows, lead times, or store priorities are
+modeled. The emulator uses a trailing average and injected noise rather than a
+trained forecasting model. The simulator's precedence-based cause labels are
+heuristic; overlapping constraints can obscure attribution, and known-answer
+classification tests have not yet been implemented. The evaluation reports
+synthetic-run metrics only and cannot substantiate any real retailer's
+performance.
+
+Next, Week 6 work should add focused known-answer tests for isolated and
+combined stock/rule/model-error scenarios, strengthen metric and boundary
+validation, and perform the planned performance run. The documentation and
+GitHub preparation are tracked separately; commit/push and remote issue updates
+are not part of this Week 5 documentation step.

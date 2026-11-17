@@ -1,0 +1,67 @@
+Synthetic retail world | seed=42
+
+stores: 10 rows | SHA-256 86ececa3f66e07a49a57420c1e177dbeffafe17e4e482c6b3dba9f24f30bdc40
+ store_id store_size  region
+        1          S central
+        2          L   south
+        3          M   south
+
+products: 200 rows | SHA-256 bacdb98b460c9e7ca2d757d3f245351f7964f7e9ceabbcbc8a377f795c211ee4
+ product_id category  base_price  pack_size
+          1  dresses       79.25          2
+          2 trousers       46.31          2
+          3     tops       59.77          1
+
+warehouse: 200 rows | SHA-256 48cf7957fcf9f9607cab83d636f9c478961b2e8bba583a4667a898b1cde265a0
+      date  product_id  qty_available
+2024-12-30           1            121
+2024-12-30           2            699
+2024-12-30           3            223
+
+sales_history: 730,000 rows | SHA-256 345869c0619c47620a4e4fa035185aa776da72599117809cae1b1583e8fb76c0
+      date  store_id  product_id  qty
+2024-01-01         1           1    1
+2024-01-01         1           2    3
+2024-01-01         1           3    0
+
+true_demand: 56,000 rows | SHA-256 45e9906e2511a9a2a03e662a8858c60fa59d603917e53df9adaf69a8cb9b8314 (evaluation-only; samples withheld)
+
+forecasts: 56,000 rows | SHA-256 19f23b6ff2929018357744d5eb496e46ccc53ccc4348422ba31804c5b6e30c93
+emulator: bias=0.0, variance=0.01, seasonal_drift=0.1
+      date  store_id  product_id  qty_forecast
+2024-12-31         1           1      0.220723
+2024-12-31         1           2      1.791143
+2024-12-31         1           3      0.307033
+
+simulation: 56,000 rows | SHA-256 0c7256cf501f4d05df3ddd14298efd17d07712b9adb8a4251bbb4fdd05495fe1
+stock-out rows: 30,386 | lost sales: 65,200 | minimum stock: 1
+      date  store_id  product_id category  qty_forecast  qty_true  qty_requested  qty_to_order  qty_shipped  warehouse_remaining  store_inventory_start  store_inventory_end  qty_sold  lost_sales  overstock  stock_out deviation_cause
+2024-12-31         1           1  dresses      0.220723         1              1             1            0                  121                      0                    0         0           1          0       True rule constraint
+2024-12-31         2           1  dresses      0.553568         1              1             1            0                  121                      0                    0         0           1          0       True rule constraint
+2024-12-31         3           1  dresses      0.420689         0              1             1            0                  121                      0                    0         0           0          0      False rule constraint
+
+WAPE / MAPE / bias by overall, store, category, and season
+           level  observations   wape   mape   bias  store_id  category season  product_id
+         overall         56000 0.5973 0.5137 0.0711       NaN       NaN    NaN         NaN
+           store          5600 0.7166 0.4649 0.0700    1.0000       NaN    NaN         NaN
+           store          5600 0.5089 0.5523 0.0602    2.0000       NaN    NaN         NaN
+           store          5600 0.5985 0.5355 0.0749    3.0000       NaN    NaN         NaN
+           store          5600 0.5994 0.5211 0.0886    4.0000       NaN    NaN         NaN
+           store          5600 0.5980 0.5021 0.0635    5.0000       NaN    NaN         NaN
+           store          5600 0.5159 0.5792 0.0733    6.0000       NaN    NaN         NaN
+           store          5600 0.7307 0.4683 0.0779    7.0000       NaN    NaN         NaN
+           store          5600 0.5123 0.5412 0.0688    8.0000       NaN    NaN         NaN
+           store          5600 0.7231 0.4601 0.0773    9.0000       NaN    NaN         NaN
+           store          5600 0.7232 0.4708 0.0617   10.0000       NaN    NaN         NaN
+product_category         12880 0.7107 0.4652 0.0569       NaN   dresses    NaN         NaN
+product_category          9520 0.5289 0.5189 0.0515       NaN  knitwear    NaN         NaN
+product_category         13440 0.5333 0.5142 0.0057       NaN outerwear    NaN         NaN
+product_category         10080 0.7320 0.5125 0.1758       NaN      tops    NaN         NaN
+product_category         10080 0.5831 0.5606 0.1322       NaN  trousers    NaN         NaN
+          season         56000 0.5973 0.5137 0.0711       NaN       NaN winter         NaN
+
+Deviation causes
+ deviation_cause  observations  lost_sales  observation_share  lost_sales_share
+     model error         13813        4527             0.2467            0.0694
+ rule constraint         38048       50379             0.6794            0.7727
+stock constraint          4139       10294             0.0739            0.1579
