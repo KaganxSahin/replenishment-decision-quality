@@ -78,8 +78,8 @@ class GeneratorPreliminaryTests(unittest.TestCase):
 
     def test_cli_rejects_invalid_arguments_without_traceback(self) -> None:
         root = Path(__file__).resolve().parent.parent
-        for args, expected in ((["--stores", "0"], "stores must be at least 1"),
-                               (["--seed", "-1"], "seed must be non-negative"),
+        for args, expected in ((["--stores", "0"], "stores must be a positive integer"),
+                               (["--seed", "-1"], "seed must be a non-negative integer"),
                                (["--start-date", "not-a-date"], "invalid")):
             with self.subTest(args=args):
                 result = subprocess.run(
@@ -89,6 +89,14 @@ class GeneratorPreliminaryTests(unittest.TestCase):
                 self.assertNotEqual(result.returncode, 0)
                 self.assertIn(expected, result.stderr)
                 self.assertNotIn("Traceback", result.stderr)
+
+
+    def test_non_integer_dimensions_and_boolean_seed_are_rejected(self) -> None:
+        for field in ("seed", "stores", "products", "history_days", "future_days"):
+            value = True if field == "seed" else 1.5
+            with self.subTest(field=field, value=value):
+                with self.assertRaisesRegex(ValueError, field):
+                    WorldConfig(**{field: value})
 
 
 if __name__ == "__main__":

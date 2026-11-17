@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from datetime import date
+from numbers import Integral
 
 import numpy as np
 import pandas as pd
@@ -15,11 +16,14 @@ class WorldConfig:
     start_date: date = date(2024, 1, 1)
 
     def __post_init__(self) -> None:
-        if self.seed < 0:
-            raise ValueError("seed must be non-negative")
+        if isinstance(self.seed, bool) or not isinstance(self.seed, Integral) or self.seed < 0:
+            raise ValueError("seed must be a non-negative integer")
         for name in ("stores", "products", "history_days", "future_days"):
-            if getattr(self, name) < 1:
-                raise ValueError(f"{name} must be at least 1")
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, Integral) or value < 1:
+                raise ValueError(f"{name} must be a positive integer")
+        if not isinstance(self.start_date, date):
+            raise ValueError("start_date must be a date")
 
 
 def generate_world(config: WorldConfig) -> dict[str, pd.DataFrame]:
