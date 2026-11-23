@@ -681,6 +681,81 @@ performance.
 
 Next, Week 6 work should add focused known-answer tests for isolated and
 combined stock/rule/model-error scenarios, strengthen metric and boundary
-validation, and perform the planned performance run. The documentation and
-GitHub preparation are tracked separately; commit/push and remote issue updates
-are not part of this Week 5 documentation step.
+validation, and perform the planned performance run. The Week 5 implementation
+and documentation were subsequently committed and pushed; issue statuses were
+not changed at that time.
+
+## 31. Testing Methodology (Week 6)
+
+On 23 November 2026 the project was tested on Windows 11 build 26200 with
+Python 3.12.10, NumPy 2.5.3, pandas 3.0.6 and Streamlit 1.67.0. Python
+`unittest` was selected for unit, boundary, CLI and integration tests; Streamlit
+`AppTest` was used to check the actual dashboard filters. The generator was
+measured using `time.perf_counter`. The complete suite contained 33 tests and
+passed in 12.601 seconds. All inputs were fictional synthetic data.
+
+Test cases were selected from the numbered functional/non-functional
+requirements. They include positive, invalid and boundary inputs, same-seed
+reproducibility, hand-calculated metrics, simulator conservation, controlled
+cause scenarios, UI filter agreement and a generator performance run. The
+[detailed testing report](testing-week-06.md) supplies each important case ID,
+component/goal, input, expected and actual result, status, and evidence.
+
+## 32. Validation Against Requirements (Week 6)
+
+FR-01 generation tests validate table sizes, unique references, date separation,
+minimum dimensions and repeatability. FR-02 tests validate baseline/bias,
+seed-controlled noise, and invalid inputs. FR-04 and FR-06 are checked using
+an emulator fitted to constant four-unit history plus independently specified
+demand, warehouse and pack constraints. Seven controlled cases cover isolated
+stock and rule restrictions, under/overforecast, no error, and overlapping
+constraints under documented priority. The emulator injects forecast bias;
+warehouse and rule constraints are separate scenario inputs. FR-05 is checked
+against manually calculated WAPE, MAPE and bias, zero actuals, and segment
+values. FR-07 is checked through store, category and date filters with displayed
+metrics recomputed independently from filtered raw rows.
+
+These checks provide evidence for selected configurations rather than proof of
+universal correctness. FR-03 remains unimplemented. The simulator—not an
+independent causal classifier—assigns priority-based labels to all rows; this
+does not demonstrate exclusive real-world cause attribution or fully establish
+FR-06's forecast-versus-shipped wording. NFR-02 was tested in one environment.
+NFR-04 is partially tested: a small pipeline succeeded with Python socket
+connection hooks blocked, but an OS-isolated offline dashboard run was not
+performed. These boundaries and the historical baseline assumptions remain
+explicitly documented.
+
+## 33. Testing Results and Experimental Results (Week 6)
+
+| Test / requirement | Input and expected result | Observed result | Status |
+|---|---|---|---|
+| T05: stock, FR-06/NFR-03 | Forecast 4, demand 4, pack 1, stock 2: ship 2 and label stock | Ship 2, lost sales 2, stock constraint | PASS |
+| T06: rule, FR-06/NFR-03 | Forecast 4, demand 4, pack 3, stock 20: ship 3 and label rule | Ship 3, lost sales 1, rule constraint | PASS |
+| T07: model/no error | Forecast 2, 6, 4 against demand 4: model, model, other | Expected shipments, losses and labels matched | PASS |
+| T08: overlapping constraints | Stock+rule+model, then rule+model: stock priority, then rule | Both priority labels and expected shipments matched | PASS |
+| T09: FR-05/NFR-03 | Forecast [3,1,4], demand [2,0,5]: WAPE 3/7, MAPE 0.35, bias 1/7 | 0.4285714286, 0.35, 0.1428571429 | PASS |
+| T11: FR-07 | Store/category/date filter: metrics match independent calculation from raw rows | Filter and WAPE/MAPE/bias/lost-sales assertions matched | PASS |
+| T12: NFR-01 | 30 stores, 300 products, 730 history days; generator <60 seconds | 6,570,000 history rows, 9,000 future rows, 0.607 seconds | PASS |
+| T13: NFR-04 partial | Small pipeline with Python socket connects blocked; 12 outcomes | 12 outcomes; no OS-level isolation or dashboard included | PARTIAL |
+
+Full inputs and results are recorded in [testing-week-06.md](testing-week-06.md),
+[checks.txt](../evidence/week-06/checks.txt), and the
+[33-test log](../evidence/week-06/tests.txt). The performance figure refers to
+one generator-only run on the recorded machine; it is not a measurement of
+the entire pipeline. No application defect was observed in these Week 6 runs,
+so there is no invented failure/fix/retest sequence or product bug-fix commit.
+The Windows Git commit command initially failed because of quoting; retrying
+with an unspaced message successfully recorded the test/evidence commit
+[5749236](https://github.com/KaganxSahin/replenishment-decision-quality/commit/5749236).
+
+## 34. Development Process - Stage 4 and Next Steps
+
+The [Stage 4 record](development-stage-4.md) documents date, objective,
+methods, actual problems, evidence, commit and next steps. The
+[Week 6 progress record](weekly-progress/week06.md) and
+[weekly log](weekly_log.md) summarize the same actual results.
+
+Week 7 should independently install and run the project and test the complete
+pipeline and dashboard in a genuinely offline, no-database environment.
+Further work must distinguish heuristic labels from independent causal
+attribution and keep real retailer performance claims outside the project.

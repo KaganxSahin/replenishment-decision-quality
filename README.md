@@ -28,8 +28,8 @@ history is a future extension. A rule-based replenishment simulator turns
 forecasts into daily decisions, and an evaluation framework measures forecasts
 against generated true demand. The current local pipeline runs end to end from
 one CLI command, with no database, external data file, or real data of any kind.
-Cause labels are currently heuristic simulator outputs; known-answer
-cause-classification validation remains future work.
+Cause labels are heuristic simulator outputs; Week 6 controlled known-answer
+scenarios validate selected cases but do not prove general causal attribution.
 
 ## Objective
 
@@ -79,14 +79,14 @@ the project.
 - FR-03: Optional real forecasting model - not implemented
 - FR-04: Rule-based replenishment simulation - implemented
 - FR-05: WAPE/MAPE/bias metrics by segment - implemented
-- FR-06: Heuristic deviation-cause labels; known-answer validation remains outstanding
+- FR-06: Heuristic deviation-cause labels; controlled known-answer cases passed, general causality not established
 - FR-07: Interactive dashboard with store, category, and date filters - implemented
 
 ## Scope
 
 The first version includes the synthetic world generator, emulator,
-replenishment simulator, evaluation framework, and dashboard. Known-answer
-validation of cause classification is still outstanding. No real or confidential
+replenishment simulator, evaluation framework, and dashboard. Selected known-answer cases
+have been tested; broader attribution remains limited. No real or confidential
 data, or parameters derived from it, are used. Excluded: modifying a production
 replenishment engine, automatic model retraining, real-time streaming analysis,
 customer-level analysis, and price optimization. The full specification with
@@ -137,21 +137,29 @@ demonstration remains available at [first run](evidence/week-04/run-1.txt),
 The generated history is still a simplified demand-based series and does not
 model historical stock-outs or replenishment. Warehouse availability is a
 single opening snapshot that depletes during the simulated horizon; replenishment
-inflows are not modeled. Cause labels use a deterministic heuristic and have not
-yet passed dedicated known-answer classification tests. The optional real
-forecaster is not implemented. `.venv/` is ignored by Git; installation requires
+inflows are not modeled. Cause labels use a deterministic heuristic; controlled
+known-answer cases passed, but this does not establish general causality. An
+OS-isolated offline run including the dashboard remains unverified. The optional
+real forecaster is not implemented. `.venv/` is ignored by Git; installation requires
 package-index access or a local package cache.
 
 ## Current Status
 
+The Week 6 validation suite ran 33 tests successfully. Controlled isolated and
+combined cause scenarios, hand-calculated metrics, repeatability and dashboard
+filters passed. The generator produced 6,570,000 historical rows for 30 stores,
+300 products and 730 days in 0.607 seconds on the recorded machine. The Python
+socket-guarded small-pipeline check does not replace an OS-isolated offline test.
+See the [test report](docs/testing-week-06.md), [Stage 4](docs/development-stage-4.md),
+[Week 6 progress](docs/weekly-progress/week06.md), [test output](evidence/week-06/tests.txt)
+and [measured checks](evidence/week-06/checks.txt).
+
 The Week 5 prototype implements the synthetic generator, pluggable forecaster
 contract with its built-in error-injection emulator, replenishment simulation,
 initial evaluation metrics and heuristic cause summaries, and a Streamlit
-dashboard. The default seed-42 run produces 730,000 historical rows, 56,000
+dashboard. The default seed-42 run produced 730,000 historical rows, 56,000
 forecasts, and 56,000 simulation records. Same-seed CLI output matched byte for
-byte in the recorded environment. The current suite ran 27 tests successfully;
-this is not the comprehensive Week 6 validation, and dedicated known-answer
-cause-classification tests remain outstanding.
+byte in the recorded environment.
 
 See the [Week 5 architecture-to-implementation comparison](docs/design/architecture-comparison-week5.md),
 [Stage 2 record](docs/development-stage-2.md), [Stage 3 record](docs/development-stage-3.md),

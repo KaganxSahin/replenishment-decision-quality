@@ -82,3 +82,17 @@ See the [Stage 1 record](development-stage-1.md) and [Week 4 progress record](we
 The Week 5 record describes tested synthetic prototype behavior only. It does not
 claim that the cause labels provide universally correct or production-ready
 causal attribution.
+
+## Week 6 - Testing and Validation
+
+| Field | Actual record |
+|---|---|
+| **Week** | 6 (23 November 2026) |
+| **Tasks planned** | Test key requirements, record expected/actual results, investigate any defects, update report, Stage 4 and GitHub. |
+| **Tasks completed** | Added controlled cause, metric, input, reproducibility and dashboard filter tests; measured generator performance; documented test strategy, detailed results and limits. |
+| **GitHub commit** | [5749236](https://github.com/KaganxSahin/replenishment-decision-quality/commit/5749236): tests and actual evidence. No product bug-fix commit is claimed. |
+| **Problems and solutions** | No application defect observed. Git commit command quoting failed once on Windows; retrying with an unspaced message succeeded. |
+| **Tests performed** | 33 tests passed in 12.601 s; known-answer scenarios and hand-calculated metrics matched. Generator: 30 stores, 300 products, 730 historical days, 6,570,000 rows in 0.607 s. Socket-guarded small pipeline passed; genuine offline dashboard test remains outstanding. |
+| **Evidence** | [Detailed testing table](testing-week-06.md), [test log](../evidence/week-06/tests.txt), [numeric results](../evidence/week-06/checks.txt), and [Stage 4](development-stage-4.md). |
+| **Report sections updated** | Sections 31–34: testing methodology, validation, results, Stage 4 and next steps. |
+| **Next week** | Independent installation and integration verification; genuine offline/no-database full pipeline and dashboard run; examine remaining attribution limitations. |
