@@ -1,0 +1,13 @@
+Python 3.12.10 | Windows-11-10.0.26200-SP0
+isolated stock: input bias=0, actual=4, pack=1, warehouse=2; expected forecast/shipped/lost/cause=(4, 2, 2, 'stock constraint'); actual=(np.float64(4.0), np.int64(2), np.int64(2), 'stock constraint'); PASS
+isolated rule: input bias=0, actual=4, pack=3, warehouse=20; expected forecast/shipped/lost/cause=(4, 3, 1, 'rule constraint'); actual=(np.float64(4.0), np.int64(3), np.int64(1), 'rule constraint'); PASS
+underforecast: input bias=-0.5, actual=4, pack=1, warehouse=20; expected forecast/shipped/lost/cause=(2, 2, 2, 'model error'); actual=(np.float64(2.0), np.int64(2), np.int64(2), 'model error'); PASS
+overforecast: input bias=0.5, actual=4, pack=1, warehouse=20; expected forecast/shipped/lost/cause=(6, 6, 0, 'model error'); actual=(np.float64(6.0), np.int64(6), np.int64(0), 'model error'); PASS
+no error: input bias=0, actual=4, pack=1, warehouse=20; expected forecast/shipped/lost/cause=(4, 4, 0, 'other'); actual=(np.float64(4.0), np.int64(4), np.int64(0), 'other'); PASS
+overlap: stock + rule + model: input bias=0.5, actual=4, pack=4, warehouse=2; expected forecast/shipped/lost/cause=(6, 0, 4, 'stock constraint'); actual=(np.float64(6.0), np.int64(0), np.int64(4), 'stock constraint'); PASS
+overlap: rule + model: input bias=0.5, actual=4, pack=4, warehouse=20; expected forecast/shipped/lost/cause=(6, 4, 0, 'rule constraint'); actual=(np.float64(6.0), np.int64(4), np.int64(0), 'rule constraint'); PASS
+metric input forecast=[3,1,4], actual=[2,0,5]; expected WAPE/MAPE/bias=(0.42857142857142855, 0.35, 0.14285714285714285); actual=(0.42857142857142855, 0.35, 0.14285714285714285); PASS
+socket-guarded small pipeline: expected 12 outcomes; actual 12; PASS
+Limit: Python socket hooks only; not an OS-isolated network test and dashboard not included.
+generator config: WorldConfig(seed=42, stores=30, products=300, history_days=730, future_days=1, start_date=datetime.date(2024, 1, 1))
+expected history rows=6570000, future rows=9000, generator time <60 seconds; actual history rows=6570000, future rows=9000, time=0.607 seconds; PASS
