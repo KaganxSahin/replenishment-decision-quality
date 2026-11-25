@@ -1,6 +1,7 @@
 import unittest
 from datetime import date
 from pathlib import Path
+from unittest.mock import patch
 
 import pandas as pd
 from streamlit.testing.v1 import AppTest
@@ -18,6 +19,14 @@ class DashboardSmokeTests(unittest.TestCase):
         app.multiselect[1].set_value([app.multiselect[1].options[0]])
         app.run()
         self.assertEqual(len(app.exception), 0)
+
+    def test_dashboard_loads_when_repository_root_is_not_working_directory(self) -> None:
+        project_root = Path(__file__).resolve().parent.parent
+        app = AppTest.from_file(str(project_root / "src" / "rdq" / "dashboard.py"), default_timeout=60)
+        with patch.object(Path, "cwd", return_value=project_root.parent):
+            app.run()
+        self.assertEqual(len(app.exception), 0)
+        self.assertGreaterEqual(len(app.metric), 5)
 
 
 class DashboardDateFilterTests(unittest.TestCase):
