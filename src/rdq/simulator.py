@@ -178,14 +178,18 @@ def simulate_replenishment(
             lost_sales = actual - sold
             forecast = float(row["qty_forecast"])
             stock_limited = shipped < pack_limited_orders[position]
-            rule_limited = (
-                settings.minimum_stock > forecast
-                or pack_limited_orders[position] < requested_orders[position]
-            )
+            rule_reduced_order = pack_limited_orders[position] < requested_orders[position]
             model_error = not np.isclose(forecast, actual, rtol=0, atol=1e-9)
+            # Lost sales can only arise from a warehouse, pack-size, or forecast
+            # limitation: the minimum-stock rule raises shipments, so it must not
+            # absorb losses caused by an underforecast.
             if stock_limited:
                 cause = "stock constraint"
-            elif rule_limited:
+            elif rule_reduced_order:
+                cause = "rule constraint"
+            elif lost_sales > 0:
+                cause = "model error" if model_error else "other"
+            elif settings.minimum_stock > forecast:
                 cause = "rule constraint"
             elif model_error:
                 cause = "model error"

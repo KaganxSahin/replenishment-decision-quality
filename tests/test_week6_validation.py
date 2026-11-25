@@ -68,6 +68,20 @@ class KnownAnswerCauseTests(unittest.TestCase):
         self.assertEqual(rule_and_model["qty_shipped"], 4)
         self.assertEqual(rule_and_model["deviation_cause"], "rule constraint")
 
+    def test_minimum_stock_rule_does_not_absorb_model_shortfall(self):
+        row = self.run_scenario(bias=-0.75, actual=5, pack_size=1, warehouse=20, minimum_stock=2)
+        self.assertEqual(row["qty_forecast"], 1.0)
+        self.assertEqual(row["qty_shipped"], 2)
+        self.assertEqual(row["lost_sales"], 3)
+        self.assertEqual(row["deviation_cause"], "model error")
+
+    def test_minimum_stock_raise_labels_rule_cause_without_lost_sales(self):
+        row = self.run_scenario(bias=0, actual=4, pack_size=1, warehouse=20, minimum_stock=6)
+        self.assertEqual(row["qty_forecast"], 4.0)
+        self.assertEqual(row["qty_shipped"], 6)
+        self.assertEqual(row["lost_sales"], 0)
+        self.assertEqual(row["deviation_cause"], "rule constraint")
+
 
 class MetricValidationTests(unittest.TestCase):
     def setUp(self):
