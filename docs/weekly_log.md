@@ -114,5 +114,5 @@ tests, and reran the full 36-test suite successfully. See the
 | Results | 37 tests passed; pip check clean; small pipeline produced 168 history, 12 future, 12 forecast and 12 outcome rows. |
 | Environment and limitations | Windows 11, Python 3.12.10; no peer available, so developer-led clean-environment test. No browser or OS-offline dashboard proof; blanket socket guard blocked local AppTest loopback. |
 | Evidence | [R01–R06](reproducibility-week-07.md), [terminal check](../evidence/week-07/reproducibility-check.txt), [test output](../evidence/week-07/reproducibility-tests.txt). |
-| Commit | Week 7 commit link to be recorded after publication. |
+| Commit | [095dd9f](https://github.com/KaganxSahin/replenishment-decision-quality/commit/095dd9f): integration correction; [43d7d1c](https://github.com/KaganxSahin/replenishment-decision-quality/commit/43d7d1c): reproducibility guide and evidence. |
 | Next week | Final report/README, screenshots and presentation preparation. |

@@ -9,5 +9,5 @@
 | Actual problem and solution | AppTest outside the repository root could not import `src.rdq`; dashboard now derives project root from its file path. Regression coverage and successful retest added. |
 | Limitations | No peer was available: developer-led clean-environment test. No OS-isolated offline or browser dashboard test. Socket guard blocked AppTest's local loopback. Other OS/Python versions unverified. |
 | Evidence | [Reproducibility results](../reproducibility-week-07.md), [terminal check](../../evidence/week-07/reproducibility-check.txt), [test log](../../evidence/week-07/reproducibility-tests.txt), [import failure](../../evidence/week-07/dashboard-import-failure.txt). |
-| Commit | Final Week 7 commit to be added after publication. |
+| Commit | [095dd9f](https://github.com/KaganxSahin/replenishment-decision-quality/commit/095dd9f): integration fix; [43d7d1c](https://github.com/KaganxSahin/replenishment-decision-quality/commit/43d7d1c): guide, evidence and Stage 5. |
 | Next step | Week 8: complete report and presentation evidence; Week 9: live end-to-end/self-validation demonstration. |
