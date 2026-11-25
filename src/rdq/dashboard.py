@@ -80,8 +80,12 @@ def main() -> None:
         min_value=first_date,
         max_value=last_date,
     )
-    if isinstance(selected_dates, tuple) and len(selected_dates) == 2:
-        start_date, end_date = selected_dates
+    if isinstance(selected_dates, tuple):
+        start_date = selected_dates[0] if selected_dates and selected_dates[0] is not None else first_date
+        if len(selected_dates) == 2 and selected_dates[1] is not None:
+            end_date = selected_dates[1]
+        else:
+            end_date = last_date
     else:
         start_date = end_date = selected_dates
 
