@@ -114,7 +114,9 @@ The CLI generates the world, fits the error-injection emulator on historical
 sales, forecasts the separate future horizon, simulates replenishment, and
 prints evaluation metrics and cause summaries. All tables remain in memory;
 future true-demand samples are withheld from CLI output. Defaults are 10 stores,
-200 products, 365 historical days, and 28 future days. Use `--help` for options.
+200 products, 365 historical days, and 28 future days (fast demo defaults; the
+NFR-01 benchmark scenario uses 30 stores, 300 products and 730 days). Use
+`--help` for options.
 
 Launch the interactive dashboard separately:
 
@@ -153,6 +155,13 @@ socket-guarded small-pipeline check does not replace an OS-isolated offline test
 See the [test report](docs/testing-week-06.md), [Stage 4](docs/development-stage-4.md),
 [Week 6 progress](docs/weekly-progress/week06.md), [test output](evidence/week-06/tests.txt)
 and [measured checks](evidence/week-06/checks.txt).
+
+A 25 November pre-Week-7 review fixed two post-submission defects (lost sales
+from an underforecast were mislabeled `rule constraint` when the minimum-stock
+rule had actually raised shipments, and a partially selected dashboard date
+range raised a `TypeError`), added three regression tests, and reran the full
+36-test suite successfully ([correction record](docs/testing-week-06.md),
+[retest log](evidence/week-06/post-submission-fix-retest.txt)).
 
 The Week 5 prototype implements the synthetic generator, pluggable forecaster
 contract with its built-in error-injection emulator, replenishment simulation,

@@ -96,3 +96,10 @@ causal attribution.
 | **Evidence** | [Detailed testing table](testing-week-06.md), [test log](../evidence/week-06/tests.txt), [numeric results](../evidence/week-06/checks.txt), and [Stage 4](development-stage-4.md). |
 | **Report sections updated** | Sections 31–34: testing methodology, validation, results, Stage 4 and next steps. |
 | **Next week** | Independent installation and integration verification; genuine offline/no-database full pipeline and dashboard run; examine remaining attribution limitations. |
+
+Post-submission note (25 November 2026): a pre-Week-7 review found and fixed
+two defects (lost sales from an underforecast were mislabeled `rule
+constraint` when the minimum-stock rule had raised shipments; a partially
+selected dashboard date range raised a `TypeError`), added three regression
+tests, and reran the full 36-test suite successfully. See the
+[post-submission correction record](testing-week-06.md).

@@ -67,3 +67,21 @@ outside these results.
 No product defect was observed in the Week 6 test runs; no code bug-fix or
 failure-to-fix-to-retest sequence is claimed. Test and evidence commit:
 [5749236](https://github.com/KaganxSahin/replenishment-decision-quality/commit/5749236).
+
+## Post-submission correction (25 November 2026)
+
+A pre-Week-7 review reproduced two defects that the 23 November suite did not
+cover. Both were corrected, regression tests were added, and the full suite
+(now 36 tests) was rerun successfully on the same machine
+([retest log](../evidence/week-06/post-submission-fix-retest.txt)).
+
+| ID | Defect and root cause | Correction and regression test | Status |
+|---|---|---|---|
+| T14 | FR-06: with forecast 1, demand 5, minimum stock 2, pack 1 and ample warehouse stock, the row was labeled `rule constraint`, although the minimum-stock rule had raised the shipment and the three lost sales came from the underforecast. Root cause: the label condition treated `minimum_stock > forecast` as a rule limitation even when it increased shipments. | Rows with lost sales are now attributed to the layer that limited fulfillment (warehouse stock, pack-size rounding, otherwise the forecast error). The minimum-stock rule is labeled `rule constraint` only when it raised the shipped quantity on a row without lost sales. Regression tests: `test_minimum_stock_rule_does_not_absorb_model_shortfall`, `test_minimum_stock_raise_labels_rule_cause_without_lost_sales`. | PASS after fix |
+| T15 | FR-07: selecting only the start of the dashboard evaluation-date range raised a `TypeError` in the date filter. Root cause: a one-element date tuple was assigned to both filter bounds. | A partial selection now filters from the selected start date to the last available date. Regression test: `test_partial_date_range_selection_does_not_raise`. | PASS after fix |
+
+The 23 November results above remain unchanged historical records. The
+attribution change also affects labels of rows without lost sales where only
+the minimum-stock rule modified shipments; the priority order
+(stock → rule → model → other) and the heuristic, non-causal nature of the
+labels are unchanged.

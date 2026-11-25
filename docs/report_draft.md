@@ -572,10 +572,14 @@ finite warehouse stock, carries store inventory across simulated days, and
 records shipped quantities, sales, lost sales, overstock, and stock-out flags.
 `src/rdq/evaluation.py` calculates WAPE, MAPE, and bias overall and by store,
 product category, season, and store-product pair. It also summarizes the
-simulator's assigned cause labels. The current cause labels are a deterministic
+simulator's assigned cause labels. The cause labels are a deterministic
 heuristic with the priority stock constraint, rule constraint, model error,
-then other; they are not independently inferred by the evaluator and do not
-establish exclusive real-world causality.
+then other: rows with lost sales are attributed to the layer that limited
+fulfillment (warehouse stock, pack-size rounding, otherwise the forecast
+error), while the minimum-stock rule is labeled `rule constraint` only when
+it raised the shipped quantity on a row without lost sales. The labels are
+not independently inferred by the evaluator and do not establish exclusive
+real-world causality.
 
 `src/rdq/pipeline.py` provides the shared `run_pipeline` orchestration used by
 the CLI and dashboard. `src/rdq/dashboard.py` provides Streamlit controls for
@@ -747,6 +751,17 @@ so there is no invented failure/fix/retest sequence or product bug-fix commit.
 The Windows Git commit command initially failed because of quoting; retrying
 with an unspaced message successfully recorded the test/evidence commit
 [5749236](https://github.com/KaganxSahin/replenishment-decision-quality/commit/5749236).
+
+**Post-submission correction (25 November 2026).** A pre-Week-7 review
+reproduced two defects outside the 23 November test coverage: lost sales from
+an underforecast were labeled `rule constraint` when the minimum-stock rule had
+actually raised shipments (the `minimum_stock > forecast` condition was treated
+as a limitation), and selecting only the start of the dashboard evaluation-date
+range raised a `TypeError` in the date filter. Both were corrected, three
+regression tests were added, and the full 36-test suite was rerun
+successfully. Details are in the
+[post-submission correction record](testing-week-06.md) and the
+[retest log](../evidence/week-06/post-submission-fix-retest.txt).
 
 ## 34. Development Process - Stage 4 and Next Steps
 
