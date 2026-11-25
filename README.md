@@ -94,38 +94,102 @@ non-functional requirements, user stories, and milestones is in
 `docs/requirements.md`; planned work is tracked in
 [GitHub Issues](https://github.com/KaganxSahin/replenishment-decision-quality/issues).
 
-## Development Setup (Windows)
+## Installation and Reproducibility
 
-Python 3.12 and Git are required. From the repository root, run:
+Tested on Windows 11 with Python 3.12.10 and Git for Windows. Required libraries
+are pinned in `requirements.txt`: NumPy 2.5.3, pandas 3.0.6 and Streamlit 1.67.0
+(transitive dependencies are resolved by pip). A normal consumer laptop is
+sufficient; no GPU, database, external data file, API key or `.env` file is used.
+`.env.example` contains only placeholders for a possible, out-of-scope future
+data-source connection; do not copy or configure it for this application.
+
+From a terminal, clone the repository and enter the **repository root**:
 
 ```cmd
+git clone https://github.com/KaganxSahin/replenishment-decision-quality.git
+cd replenishment-decision-quality
 python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt
-.venv\Scripts\python -m src.rdq --seed 42
 ```
 
-Run the full test suite with:
+Activate the new environment. Windows Command Prompt:
 
 ```cmd
-.venv\Scripts\python -m unittest discover -s tests -v
+.venv\Scripts\activate.bat
 ```
 
-The CLI generates the world, fits the error-injection emulator on historical
-sales, forecasts the separate future horizon, simulates replenishment, and
-prints evaluation metrics and cause summaries. All tables remain in memory;
-future true-demand samples are withheld from CLI output. Defaults are 10 stores,
-200 products, 365 historical days, and 28 future days (fast demo defaults; the
-NFR-01 benchmark scenario uses 30 stores, 300 products and 730 days). Use
-`--help` for options.
+Linux/macOS:
 
-Launch the interactive dashboard separately:
-
-```cmd
-.venv\Scripts\python -m streamlit run src\rdq\dashboard.py --server.address 127.0.0.1 --server.port 8501 --server.headless true
+```bash
+source .venv/bin/activate
 ```
 
-The dashboard exposes synthetic-run settings, store/category/date filters,
-accuracy and outcome metrics, a cause summary, and simulation records.
+Then install and run the integrated pipeline:
+
+```bash
+python -m pip install -r requirements.txt
+python -m src.rdq --seed 42
+```
+
+A smaller demonstration for a quick installation check:
+
+```bash
+python -m src.rdq --seed 42 --stores 2 --products 3 --history-days 28 --future-days 2
+```
+
+Expected output includes the table names and row counts, SHA-256 hashes, three
+sample forecasts, simulation outcomes, segment metrics, and a cause summary.
+For the small run, the world contains 168 historical and 12 future rows, with
+12 forecasts and 12 simulation outcomes. All values are synthetic; future
+true-demand samples are withheld from CLI output. Default demo settings are
+10 stores, 200 products, 365 historical days and 28 future days. The separate
+NFR-01 benchmark scenario uses 30 stores, 300 products and 730 days.
+
+Run all tests from the repository root:
+
+```bash
+python -m unittest discover -s tests -v
+```
+
+Launch the interactive dashboard:
+
+```bash
+python -m streamlit run src\rdq\dashboard.py --server.address 127.0.0.1 --server.port 8501 --server.headless true
+```
+
+On Linux/macOS, use forward slashes: `src/rdq/dashboard.py`. Open the local
+address printed by Streamlit (normally `http://127.0.0.1:8501`). The dashboard
+runs the same shared pipeline and exposes run settings, store/category/date
+filters, metrics, cause summaries and simulation records.
+
+### Common installation issues
+
+- **Package installation:** internet access or a populated local package cache
+  is needed only for dependency installation. Once installed, the application
+  reads no external data files and requires no configured service.
+- **New venv without pip:** run `python -m ensurepip --upgrade`, then repeat
+  the dependency installation.
+- **`No module named src`:** use the commands above from the repository root;
+  do not run `python -m src.rdq` from inside `src` or another directory.
+- **Different Python:** use Python 3.12 as tested; other versions/platforms
+  have not been verified. Recreate `.venv` if it points to another interpreter.
+- **Dashboard address in use:** change `--server.port` and open the printed URL.
+
+### Week 7 clean-environment evidence
+
+On 25 November 2026 the repository was freshly cloned at commit `8740ff5`, a
+new virtual environment was created, and dependencies were installed from
+`requirements.txt`. CLI, dashboard/AppTest and the full suite passed after one
+integration correction. The dashboard previously failed when executed by
+`AppTest` outside the repository root; deriving the project root from the script
+location fixed it. The final suite contains 37 tests. A peer was unavailable,
+so this was a developer-led clean-environment check, not an independent test.
+
+See [reproducibility results](docs/reproducibility-week-07.md),
+[terminal evidence](evidence/week-07/reproducibility-check.txt), and
+[37-test output](evidence/week-07/reproducibility-tests.txt). The attempted
+all-socket guard blocked AppTest's own Windows loopback socketpair; it does not
+establish OS-level offline operation. No independent peer, browser-based
+dashboard, or OS-isolated offline test is claimed.
 
 Week 5 evidence: [pipeline output](evidence/week-05/pipeline-run.txt),
 [repeat run](evidence/week-05/pipeline-run-repeat.txt),

@@ -1,0 +1,112 @@
+Synthetic retail world | seed=42
+
+stores: 2 rows | SHA-256 c98344c860db519bdaed2515585ee480c2adfcb208a03f66949e49bfbf580780
+ store_id store_size  region
+        1          S central
+        2          L central
+
+products: 3 rows | SHA-256 73c8862e070cf24af13cbfa32df7d9ba0a8e2dc20d03bccde4d9c104f7aa00b6
+ product_id category  base_price  pack_size
+          1  dresses       32.24          4
+          2 knitwear      146.83          4
+          3     tops      118.95          6
+
+warehouse: 3 rows | SHA-256 c1f5aee039cb294aa6e40dc8d483129bd6290c5670707767adaf2488606e1776
+      date  product_id  qty_available
+2024-01-28           1            562
+2024-01-28           2            215
+2024-01-28           3            856
+
+sales_history: 168 rows | SHA-256 4869e5cf2297d450d8852bc9ec3907bd8e1699799b7d6930fcf53521a54fb205
+      date  store_id  product_id  qty
+2024-01-01         1           1    1
+2024-01-01         1           2    2
+2024-01-01         1           3    3
+
+true_demand: 12 rows | SHA-256 2d1101e6cf96b8de92f4e139124972b10e1cb95ee7ff957d008af4031c55320b (evaluation-only; samples withheld)
+
+forecasts: 12 rows | SHA-256 27fbcba0a57b11016bcf3a3c38eb6665e57350305ebb74a886a4df43d6e8a7ed
+emulator: bias=0.0, variance=0.01, seasonal_drift=0.1
+      date  store_id  product_id  qty_forecast
+2024-01-29         1           1      1.076798
+2024-01-29         1           2      2.692364
+2024-01-29         1           3      1.001224
+
+simulation: 12 rows | SHA-256 084c6b3f2e4a653cefb089eba7e983bddb691778d17f0ab81320700b0ef4a956
+stock-out rows: 8 | lost sales: 16 | minimum stock: 1
+      date  store_id  product_id category  qty_forecast  qty_true  qty_requested  qty_to_order  qty_shipped  warehouse_remaining  store_inventory_start  store_inventory_end  qty_sold  lost_sales  overstock  stock_out deviation_cause
+2024-01-29         1           1  dresses      1.076798         0              2             2            0                  562                      0                    0         0           0          0      False rule constraint
+2024-01-29         2           1  dresses      1.303294         1              2             2            0                  562                      0                    0         0           1          0       True rule constraint
+2024-01-29         1           2 knitwear      2.692364         3              3             3            0                  211                      0                    0         0           3          0       True rule constraint
+
+WAPE / MAPE / bias by overall, store, category, and season
+           level  observations   wape   mape    bias  store_id category season  product_id
+         overall            12 0.3146 0.2179  0.0721       NaN      NaN    NaN         NaN
+           store             6 0.5517 0.2799  0.2086    1.0000      NaN    NaN         NaN
+           store             6 0.1960 0.1684  0.0038    2.0000      NaN    NaN         NaN
+product_category             4 3.5408 0.3033  3.5408       NaN  dresses    NaN         NaN
+product_category             4 0.1206 0.1675  0.0259       NaN knitwear    NaN         NaN
+product_category             4 0.2750 0.2470 -0.2750       NaN     tops    NaN         NaN
+          season            12 0.3146 0.2179  0.0721       NaN      NaN winter         NaN
+
+Deviation causes
+deviation_cause  observations  lost_sales  observation_share  lost_sales_share
+rule constraint            12          16             1.0000            1.0000
+2026-11-25 15:43:56.868 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+Tester: Kağan Şahin (developer-led clean-environment check; no independent peer available)
+Environment: Windows-11-10.0.26300-SP0 | Python 3.12.10
+Dependencies: NumPy 2.5.3, pandas 3.0.6, Streamlit 1.67.0
+Repository: freshly cloned from GitHub before installing documentation dependencies.
+Commit: 8740ff5a793af9420e7f2eaec1110cf747b1f188
+Clone to temporary location: PASS
+Virtual environment and pip install -r requirements.txt: PASS (terminal session 25 November 2026)
+Configuration: no database, credentials or .env file required; no .env exists in clean clone: True
+R05 Main use case: PASS; all integrated pipeline stages returned expected output.
+Traceback (most recent call last):
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\evidence\week-07\verify_installation.py", line 46, in <module>
+    main()
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\evidence\week-07\verify_installation.py", line 30, in main
+    app = AppTest.from_file(str(root / "src" / "rdq" / "dashboard.py"), default_timeout=60).run()
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\testing\v1\app_test.py", line 801, in run
+    return self._tree.run(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\testing\v1\element_tree.py", line 4251, in run
+    result = self._runner._run(widget_states, timeout=timeout)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\testing\v1\app_test.py", line 679, in _run
+    script_runner = LocalScriptRunner(
+                    ^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\testing\v1\local_script_runner.py", line 68, in __init__
+    self._owned_event_loop = asyncio.new_event_loop()
+                             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 823, in new_event_loop
+    return get_event_loop_policy().new_event_loop()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\events.py", line 720, in new_event_loop
+    return self._loop_factory()
+           ^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\windows_events.py", line 316, in __init__
+    super().__init__(proactor)
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 640, in __init__
+    self._make_self_pipe()
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 787, in _make_self_pipe
+    self._ssock, self._csock = socket.socketpair()
+                               ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\socket.py", line 623, in _fallback_socketpair
+    csock.connect((addr, port))
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1139, in __call__
+    return self._mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1143, in _mock_call
+    return self._execute_mock_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\unittest\mock.py", line 1198, in _execute_mock_call
+    raise effect
+RuntimeError: network connection blocked by application guard
+Exception ignored in: <function BaseEventLoop.__del__ at 0x000002D24E2FFA60>
+Traceback (most recent call last):
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\base_events.py", line 732, in __del__
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 697, in close
+  File "C:\Users\KaganSahin\AppData\Local\Programs\Python\Python312\Lib\asyncio\proactor_events.py", line 779, in _close_self_pipe
+AttributeError: 'ProactorEventLoop' object has no attribute '_ssock'

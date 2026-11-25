@@ -774,3 +774,105 @@ Week 7 should independently install and run the project and test the complete
 pipeline and dashboard in a genuinely offline, no-database environment.
 Further work must distinguish heuristic labels from independent causal
 attribution and keep real retailer performance claims outside the project.
+
+## 35. System Integration and Installation (Week 7)
+
+On 25 November 2026 the complete application was verified from a fresh GitHub
+clone, not only from the original development directory. The existing five
+components communicate through `run_pipeline(PipelineConfig)` and in-memory
+pandas DataFrames: the generator supplies history and future demand; the
+emulator receives only history and produces forecasts; the simulator combines
+forecasts, future demand, products and warehouse stock; the evaluator consumes
+outcome records; CLI and dashboard consume the same result. Future true demand
+is not supplied to the forecaster. The architecture did not change.
+
+The clean installation used Windows 11 build 26300, Python 3.12.10 and Git for
+Windows. Pinned direct dependencies are NumPy 2.5.3, pandas 3.0.6 and Streamlit
+1.67.0; pip resolves their transitive dependencies. No GPU, database, external
+data file, credentials or `.env` is required. The committed `.env.example`
+contains only placeholders for a future, out-of-scope data-source integration.
+
+The verified installation procedure is: clone the public repository; enter its
+root; create `.venv`; activate it; run `python -m pip install -r
+requirements.txt`; run `python -m src.rdq --seed 42`; run the unit tests with
+`python -m unittest discover -s tests -v`; and optionally start Streamlit using
+`python -m streamlit run src\rdq\dashboard.py --server.address 127.0.0.1
+--server.port 8501 --server.headless true`. Linux/macOS activation uses
+`source .venv/bin/activate` and the dashboard path uses forward slashes.
+README provides a quick two-store example, expected output, and troubleshooting
+for pip, import path, Python version and occupied dashboard port. Package-index
+or local package-cache access is needed to install dependencies.
+
+## 36. Reproducibility Validation and Results (Week 7)
+
+Tester: Kağan Şahin, the project developer. No peer was available, so the guide's
+developer-led clean-environment alternative was used; no independent peer test
+is claimed. Baseline commit: `8740ff5`.
+
+| ID | Operation | Expected | Actual | Status |
+|---|---|---|---|---|
+| R01 | Clone | Repository downloads | Baseline cloned into a separate folder | PASS |
+| R02 | Install | Dependencies install in fresh venv | Requirements installed; pip check clean | PASS |
+| R03 | Configure | All required settings available | No `.env`, database or external dataset needed | PASS |
+| R04 | Start | Pipeline and dashboard start | Dashboard import fixed; CLI/AppTest passed on retest | PASS after fix |
+| R05 | Main use case | Integrated pipeline produces output | 168 history, 12 future, 12 forecasts/outcomes and evaluation tables | PASS |
+| R06 | Tests | Automated suite succeeds | 37 tests passed | PASS |
+
+A real integration defect appeared when `AppTest` loaded the dashboard from
+outside the repository root: `from src.rdq...` raised `ModuleNotFoundError`.
+The dashboard now derives the repository root from its file location and adds
+it to `sys.path` if needed. A regression test covers this working-directory
+condition; clean-environment CLI, dashboard and the complete test suite passed
+after correction. Failure and retest evidence is stored under
+`evidence/week-07/` and explained in
+[reproducibility-week-07.md](reproducibility-week-07.md).
+
+Two further observations were not application defects: an interrupted venv
+creation lacked pip and was repaired with `python -m ensurepip --upgrade`, and
+an execution-environment working-directory issue required explicit `cd`. A
+blanket socket guard was also attempted for the dashboard, but it blocked
+AppTest's own Windows asyncio loopback socketpair. This experiment therefore
+does not prove OS-level offline dashboard operation. The unguarded dashboard
+AppTest passed. No browser, independent peer, other operating system, or
+OS-isolated network result is claimed.
+
+## 37. Development Process - Stage 5 and Answers (Week 7)
+
+The [Stage 5 record](development-stage-5.md) and
+[Week 7 progress](weekly-progress/week07.md) document integration, the actual
+problem/correction, evidence, commit and next steps.
+
+1. **What does reproducibility mean and why is it important?** It means another
+   developer can use the repository and stated environment to install and run
+   the same system and obtain the same seeded results. It reveals hidden
+   machine-specific assumptions and makes testing and review trustworthy.
+2. **What dependencies are necessary?** Python 3.12, Git, NumPy 2.5.3, pandas
+   3.0.6 and Streamlit 1.67.0 with pip-resolved dependencies. No database,
+   credentials, GPU or external dataset is necessary.
+3. **How do the components communicate?** `run_pipeline` passes in-memory
+   DataFrames from generation through forecasting, simulation and evaluation;
+   the CLI and dashboard consume that common result.
+4. **What must another developer do?** Clone, enter the repository root, create
+   and activate a venv, install `requirements.txt`, run the CLI and tests, and
+   optionally launch Streamlit with the README commands.
+5. **What integration/installation problems occurred?** Dashboard import failed
+   outside the repository root; path resolution and a regression test fixed it.
+   A venv lacked pip after interrupted setup; `ensurepip` restored it. The
+   blanket socket-guard attempt was inconclusive for the dashboard, not a
+   successful offline test.
+6. **How was correctness verified?** Fresh-clone installation, CLI output,
+   dashboard/AppTest, a new import regression test, and all 37 tests passed.
+   Existing known-answer and hand-calculated checks remain included.
+7. **What happens if someone downloads the repository today?** On the tested
+   Windows/Python configuration they can install the listed packages and run
+   the complete synthetic CLI, tests and dashboard using the guide, without
+   real data or configured services. Installation still needs package access.
+8. **What remains before final demonstration?** Complete final report and
+   screenshots, test a live browser dashboard, optionally obtain peer and
+   OS-offline verification, and demonstrate end-to-end/self-validation behavior.
+   The optional real forecasting model and broader causal attribution remain
+   outside current implementation.
+
+Week 8 will finalize the report/README and add masked synthetic-output
+screenshots. Week 9 will demonstrate the integrated pipeline and known-answer
+self-validation live.

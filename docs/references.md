@@ -65,11 +65,27 @@
   metric computations over large tables can be expensive) and widgets for
   drill-down filtering. I plan to use it for the monitoring dashboard.
 
-### T3. pytest documentation
+### T3. unittest documentation
 
-- **Organization:** pytest Development Team
+- **Organization:** Python Software Foundation
 - **Year:** continuously updated
-- **Link:** [docs.pytest.org](https://docs.pytest.org/)
-- **What I learned:** The documentation explains fixtures and parametrized
-  tests, which I will use to verify that metric implementations produce correct
-  values on small, hand-computed examples before running them on real data.
+- **Link:** [docs.python.org/3/library/unittest.html](https://docs.python.org/3/library/unittest.html)
+- **What I learned:** The project uses the standard-library test runner rather
+  than pytest. Test discovery and small controlled fixtures validate metrics,
+  integration and dashboard behavior without an additional test dependency.
+
+### T4. Python venv and pip documentation (Week 7)
+
+- **Organization:** Python Software Foundation
+- **Links:** [venv](https://docs.python.org/3/library/venv.html), [pip installation](https://pip.pypa.io/en/stable/installation/)
+- **What I learned:** A separate virtual environment prevents project
+  dependencies from depending on the developer's global Python installation.
+  `ensurepip` is the documented recovery route when a new environment lacks pip.
+
+### T5. Git clone documentation (Week 7)
+
+- **Organization:** Git project
+- **Link:** [git-scm.com/docs/git-clone](https://git-scm.com/docs/git-clone)
+- **What I learned:** Cloning into a separate directory provides a reproducible
+  baseline for checking the public repository rather than relying on local,
+  uncommitted files.

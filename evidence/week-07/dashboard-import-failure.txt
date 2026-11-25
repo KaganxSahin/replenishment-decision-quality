@@ -1,0 +1,88 @@
+Synthetic retail world | seed=42
+
+stores: 2 rows | SHA-256 c98344c860db519bdaed2515585ee480c2adfcb208a03f66949e49bfbf580780
+ store_id store_size  region
+        1          S central
+        2          L central
+
+products: 3 rows | SHA-256 73c8862e070cf24af13cbfa32df7d9ba0a8e2dc20d03bccde4d9c104f7aa00b6
+ product_id category  base_price  pack_size
+          1  dresses       32.24          4
+          2 knitwear      146.83          4
+          3     tops      118.95          6
+
+warehouse: 3 rows | SHA-256 c1f5aee039cb294aa6e40dc8d483129bd6290c5670707767adaf2488606e1776
+      date  product_id  qty_available
+2024-01-28           1            562
+2024-01-28           2            215
+2024-01-28           3            856
+
+sales_history: 168 rows | SHA-256 4869e5cf2297d450d8852bc9ec3907bd8e1699799b7d6930fcf53521a54fb205
+      date  store_id  product_id  qty
+2024-01-01         1           1    1
+2024-01-01         1           2    2
+2024-01-01         1           3    3
+
+true_demand: 12 rows | SHA-256 2d1101e6cf96b8de92f4e139124972b10e1cb95ee7ff957d008af4031c55320b (evaluation-only; samples withheld)
+
+forecasts: 12 rows | SHA-256 27fbcba0a57b11016bcf3a3c38eb6665e57350305ebb74a886a4df43d6e8a7ed
+emulator: bias=0.0, variance=0.01, seasonal_drift=0.1
+      date  store_id  product_id  qty_forecast
+2024-01-29         1           1      1.076798
+2024-01-29         1           2      2.692364
+2024-01-29         1           3      1.001224
+
+simulation: 12 rows | SHA-256 084c6b3f2e4a653cefb089eba7e983bddb691778d17f0ab81320700b0ef4a956
+stock-out rows: 8 | lost sales: 16 | minimum stock: 1
+      date  store_id  product_id category  qty_forecast  qty_true  qty_requested  qty_to_order  qty_shipped  warehouse_remaining  store_inventory_start  store_inventory_end  qty_sold  lost_sales  overstock  stock_out deviation_cause
+2024-01-29         1           1  dresses      1.076798         0              2             2            0                  562                      0                    0         0           0          0      False rule constraint
+2024-01-29         2           1  dresses      1.303294         1              2             2            0                  562                      0                    0         0           1          0       True rule constraint
+2024-01-29         1           2 knitwear      2.692364         3              3             3            0                  211                      0                    0         0           3          0       True rule constraint
+
+WAPE / MAPE / bias by overall, store, category, and season
+           level  observations   wape   mape    bias  store_id category season  product_id
+         overall            12 0.3146 0.2179  0.0721       NaN      NaN    NaN         NaN
+           store             6 0.5517 0.2799  0.2086    1.0000      NaN    NaN         NaN
+           store             6 0.1960 0.1684  0.0038    2.0000      NaN    NaN         NaN
+product_category             4 3.5408 0.3033  3.5408       NaN  dresses    NaN         NaN
+product_category             4 0.1206 0.1675  0.0259       NaN knitwear    NaN         NaN
+product_category             4 0.2750 0.2470 -0.2750       NaN     tops    NaN         NaN
+          season            12 0.3146 0.2179  0.0721       NaN      NaN winter         NaN
+
+Deviation causes
+deviation_cause  observations  lost_sales  observation_share  lost_sales_share
+rule constraint            12          16             1.0000            1.0000
+2026-11-25 15:44:36.639 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-25 15:44:36.721 Uncaught app execution
+Traceback (most recent call last):
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\runtime\scriptrunner\exec_code.py", line 136, in exec_func_with_error_handling
+    result = func()
+             ^^^^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\runtime\scriptrunner\script_runner.py", line 936, in code_to_exec
+    exec(code, module.__dict__)  # noqa: S102
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\src\rdq\dashboard.py", line 6, in <module>
+    from src.rdq.evaluation import evaluate_results
+ModuleNotFoundError: No module named 'src'
+Tester: Kağan Şahin (developer-led clean-environment check; no independent peer available)
+Environment: Windows-11-10.0.26300-SP0 | Python 3.12.10
+Dependencies: NumPy 2.5.3, pandas 3.0.6, Streamlit 1.67.0
+Repository: freshly cloned from GitHub before installing documentation dependencies.
+Commit: 8740ff5a793af9420e7f2eaec1110cf747b1f188
+Clone to temporary location: PASS
+Virtual environment and pip install -r requirements.txt: PASS (terminal session 25 November 2026)
+Configuration: no database, credentials or .env file required; no .env exists in clean clone: True
+R05 Main use case: PASS; all integrated pipeline stages returned expected output.
+R04 Dashboard/AppTest start with application-level socket guards: FAIL
+Failure: socket.socket.connect also blocked the Windows asyncio loopback socketpair required by AppTest; see reproducibility-socket-dashboard-failure.txt.
+Limitation: this experiment cannot distinguish an application dependency from a blocked local loopback connection; OS-level network isolation is not claimed.
+Traceback (most recent call last):
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\evidence\week-07\verify_installation.py", line 47, in <module>
+    main()
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\evidence\week-07\verify_installation.py", line 32, in main
+    app.number_input[1].set_value(2)
+    ~~~~~~~~~~~~~~~~^^^
+  File "C:\Users\KaganSahin\.verdent\verdent-projects\sen-kdemli-bir-veri\replenishment-decision-quality\.venv\Lib\site-packages\streamlit\testing\v1\element_tree.py", line 576, in __getitem__
+    return self._list[idx]
+           ~~~~~~~~~~^^^^^
+IndexError: list index out of range

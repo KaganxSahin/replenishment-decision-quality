@@ -103,3 +103,16 @@ constraint` when the minimum-stock rule had raised shipments; a partially
 selected dashboard date range raised a `TypeError`), added three regression
 tests, and reran the full 36-test suite successfully. See the
 [post-submission correction record](testing-week-06.md).
+
+## Week 7 - Integration and Reproducibility
+
+| Field | Actual record |
+|---|---|
+| Week | 7 (25 November 2026) |
+| Tasks completed | Fresh-clone installation, dependency/configuration documentation, integrated CLI/dashboard check, R01–R06 results, Stage 5 and report answers. |
+| Integration correction | Dashboard `AppTest` outside repository root failed with `ModuleNotFoundError: src`; added script-relative project root and regression test, then retested successfully. |
+| Results | 37 tests passed; pip check clean; small pipeline produced 168 history, 12 future, 12 forecast and 12 outcome rows. |
+| Environment and limitations | Windows 11, Python 3.12.10; no peer available, so developer-led clean-environment test. No browser or OS-offline dashboard proof; blanket socket guard blocked local AppTest loopback. |
+| Evidence | [R01–R06](reproducibility-week-07.md), [terminal check](../evidence/week-07/reproducibility-check.txt), [test output](../evidence/week-07/reproducibility-tests.txt). |
+| Commit | Week 7 commit link to be recorded after publication. |
+| Next week | Final report/README, screenshots and presentation preparation. |

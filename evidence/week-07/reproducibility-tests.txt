@@ -1,0 +1,46 @@
+test_partial_date_range_selection_does_not_raise (test_dashboard.DashboardDateFilterTests.test_partial_date_range_selection_does_not_raise) ... 2026-11-25 15:46:02.042 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_dashboard_loads_when_repository_root_is_not_working_directory (test_dashboard.DashboardSmokeTests.test_dashboard_loads_when_repository_root_is_not_working_directory) ... 2026-11-25 15:46:07.084 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_dashboard_renders_metrics_and_filters_without_exceptions (test_dashboard.DashboardSmokeTests.test_dashboard_renders_metrics_and_filters_without_exceptions) ... 2026-11-25 15:46:07.568 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_bias_applies_to_trailing_baseline (test_forecaster.ErrorInjectionEmulatorTests.test_bias_applies_to_trailing_baseline) ... ok
+test_different_seed_changes_noisy_forecasts (test_forecaster.ErrorInjectionEmulatorTests.test_different_seed_changes_noisy_forecasts) ... ok
+test_fit_rejects_invalid_quantities_and_duplicate_grain (test_forecaster.ErrorInjectionEmulatorTests.test_fit_rejects_invalid_quantities_and_duplicate_grain) ... ok
+test_fit_rejects_missing_columns_and_empty_history (test_forecaster.ErrorInjectionEmulatorTests.test_fit_rejects_missing_columns_and_empty_history) ... ok
+test_forecast_rows_and_dates_follow_history_pairs (test_forecaster.ErrorInjectionEmulatorTests.test_forecast_rows_and_dates_follow_history_pairs) ... ok
+test_future_demand_is_not_an_input_to_forecaster (test_forecaster.ErrorInjectionEmulatorTests.test_future_demand_is_not_an_input_to_forecaster) ... ok
+test_invalid_emulator_settings_are_rejected (test_forecaster.ErrorInjectionEmulatorTests.test_invalid_emulator_settings_are_rejected) ... ok
+test_predict_rejects_invalid_horizon (test_forecaster.ErrorInjectionEmulatorTests.test_predict_rejects_invalid_horizon) ... ok
+test_predict_requires_fit (test_forecaster.ErrorInjectionEmulatorTests.test_predict_requires_fit) ... ok
+test_same_seed_reproduces_forecasts (test_forecaster.ErrorInjectionEmulatorTests.test_same_seed_reproduces_forecasts) ... ok
+test_cli_rejects_invalid_arguments_without_traceback (test_generator.GeneratorPreliminaryTests.test_cli_rejects_invalid_arguments_without_traceback) ... ok
+test_dates_are_contiguous_and_future_is_separate (test_generator.GeneratorPreliminaryTests.test_dates_are_contiguous_and_future_is_separate) ... ok
+test_different_seed_changes_generated_data (test_generator.GeneratorPreliminaryTests.test_different_seed_changes_generated_data) ... ok
+test_expected_tables_and_row_counts (test_generator.GeneratorPreliminaryTests.test_expected_tables_and_row_counts) ... ok
+test_invalid_dimensions_and_seed_are_rejected (test_generator.GeneratorPreliminaryTests.test_invalid_dimensions_and_seed_are_rejected) ... ok
+test_minimum_valid_dimensions_and_zero_seed (test_generator.GeneratorPreliminaryTests.test_minimum_valid_dimensions_and_zero_seed) ... ok
+test_non_integer_dimensions_and_boolean_seed_are_rejected (test_generator.GeneratorPreliminaryTests.test_non_integer_dimensions_and_boolean_seed_are_rejected) ... ok
+test_references_unique_grain_and_nonnegative_quantities (test_generator.GeneratorPreliminaryTests.test_references_unique_grain_and_nonnegative_quantities) ... ok
+test_same_seed_reproduces_all_tables (test_generator.GeneratorPreliminaryTests.test_same_seed_reproduces_all_tables) ... ok
+test_mapes_zero_actuals_and_empty_data_are_handled (test_simulator.EvaluationMetricTests.test_mapes_zero_actuals_and_empty_data_are_handled) ... ok
+test_metrics_match_hand_calculated_values_and_aggregate_segments (test_simulator.EvaluationMetricTests.test_metrics_match_hand_calculated_values_and_aggregate_segments) ... ok
+test_end_to_end_pipeline_is_reproducible (test_simulator.PipelineIntegrationTests.test_end_to_end_pipeline_is_reproducible) ... ok
+test_invalid_pack_size_is_rejected (test_simulator.ReplenishmentSimulationTests.test_invalid_pack_size_is_rejected) ... ok
+test_invalid_simulation_config_is_rejected (test_simulator.ReplenishmentSimulationTests.test_invalid_simulation_config_is_rejected) ... ok
+test_mismatched_forecast_and_demand_keys_are_rejected (test_simulator.ReplenishmentSimulationTests.test_mismatched_forecast_and_demand_keys_are_rejected) ... ok
+test_rules_stock_cap_and_inventory_carry_are_simulated (test_simulator.ReplenishmentSimulationTests.test_rules_stock_cap_and_inventory_carry_are_simulated) ... ok
+test_all_tables_and_results_repeat_for_same_seed (test_week6_validation.EndToEndValidationTests.test_all_tables_and_results_repeat_for_same_seed) ... ok
+test_dashboard_filtered_metrics_match_raw_records (test_week6_validation.EndToEndValidationTests.test_dashboard_filtered_metrics_match_raw_records) ... 2026-11-25 15:46:10.293 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+ok
+test_isolated_known_causes_and_no_error (test_week6_validation.KnownAnswerCauseTests.test_isolated_known_causes_and_no_error) ... ok
+test_minimum_stock_raise_labels_rule_cause_without_lost_sales (test_week6_validation.KnownAnswerCauseTests.test_minimum_stock_raise_labels_rule_cause_without_lost_sales) ... ok
+test_minimum_stock_rule_does_not_absorb_model_shortfall (test_week6_validation.KnownAnswerCauseTests.test_minimum_stock_rule_does_not_absorb_model_shortfall) ... ok
+test_overlapping_constraints_follow_documented_priority (test_week6_validation.KnownAnswerCauseTests.test_overlapping_constraints_follow_documented_priority) ... ok
+test_hand_computed_metrics_and_each_segment (test_week6_validation.MetricValidationTests.test_hand_computed_metrics_and_each_segment) ... ok
+test_invalid_values_and_unknown_cause_are_rejected (test_week6_validation.MetricValidationTests.test_invalid_values_and_unknown_cause_are_rejected) ... ok
+
+----------------------------------------------------------------------
+Ran 37 tests in 9.022s
+
+OK
